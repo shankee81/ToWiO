@@ -24,6 +24,7 @@ gem 'sass', "~> 3.2"
 gem 'sass-rails', '~> 3.2.3', groups: [:default, :assets]
 gem 'aws-sdk'
 gem 'db2fog'
+gem 'yaml_db'
 gem 'andand'
 gem 'truncate_html'
 gem 'representative_view'
