@@ -2,21 +2,9 @@ require 'open_food_network/order_cycle_form_applicator'
 
 module Admin
   class OrderCyclesController < ResourceController
-    before_filter :load_order_cycle_set, :only => :index
+    before_filter :load_order_cycle_set, only: :index
+    before_filter :load_enterprises, only: [:new, :edit, :create, :update]
 
-    def show
-      respond_to do |format|
-        format.html
-        format.json
-      end
-    end
-
-    def new
-      respond_to do |format|
-        format.html
-        format.json
-      end
-    end
 
     def create
       @order_cycle = OrderCycle.new(params[:order_cycle])
@@ -78,9 +66,16 @@ module Admin
         ocs.most_recently_closed
     end
 
+
     private
+
     def load_order_cycle_set
       @order_cycle_set = OrderCycleSet.new :collection => collection
+    end
+
+    def load_enterprises
+      @suppliers = Enterprise.is_primary_producer.managed_by(spree_current_user).by_name
+      @distributors = Enterprise.is_distributor.managed_by(spree_current_user).by_name
     end
   end
 end
