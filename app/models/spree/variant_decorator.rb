@@ -45,6 +45,10 @@ Spree::Variant.class_eval do
     self.option_values.destroy ovs
   end
 
+  def delete
+    self.update_column(:deleted_at, Time.now)
+  end
+
 
   private
 
