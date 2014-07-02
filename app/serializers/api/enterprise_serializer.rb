@@ -6,7 +6,7 @@ class Api::EnterpriseSerializer < ActiveModel::Serializer
     :pickup, :delivery, :active, :orders_close_at
 
   has_many :distributed_taxons, key: :taxons, serializer: Api::TaxonSerializer
-  has_many :supplied_taxons, serializer: Api::TaxonSerializer
+  has_many :supplied_taxons, serializer: Api::IdSerializer
   has_many :distributors, key: :hubs, serializer: Api::IdSerializer
   has_many :suppliers, key: :producers, serializer: Api::IdSerializer
 
