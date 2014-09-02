@@ -70,3 +70,11 @@ table#listing_products.bulk {
     }
   }
 }
+
+.variant-enterprise-tag {
+  padding: 8px;
+  background-color: #ffa500;
+}
+.variant-enterprise-tag:before {
+  content: "#"
+}
