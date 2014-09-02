@@ -3,6 +3,7 @@ angular.module("ofn.admin").factory 'EnterpriseRelationships', ($http, enterpris
     create_errors: ""
     all_permissions: [
       'add_to_order_cycle'
+      'create_tagged_variants'
       'manage_products'
     ]
 
@@ -25,4 +26,5 @@ angular.module("ofn.admin").factory 'EnterpriseRelationships', ($http, enterpris
     permission_presentation: (permission) ->
       switch permission
         when "add_to_order_cycle" then "can add to order cycle"
+        when "create_tagged_variants" then "can create tagged variants from"
         when "manage_products" then "can manage the products of"
