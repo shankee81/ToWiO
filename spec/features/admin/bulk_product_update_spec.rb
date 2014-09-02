@@ -8,7 +8,7 @@ feature %q{
   include WebHelper
   
   describe "listing products" do
-    before :each do
+    before do
       login_to_admin_section
     end
 
@@ -144,7 +144,7 @@ feature %q{
   end
   
   describe "listing variants" do
-    before :each do
+    before do
       login_to_admin_section
     end
 
@@ -725,6 +725,23 @@ feature %q{
         expect(page).to have_field "product_name", with: p1.name
         expect(page).to have_field "product_name", with: p2.name
       end
+    end
+  end
+
+  describe "tagged variants" do
+    let(:enterprise) { create(:supplier_enterprise) }
+    let(:product_tagged) { create(:simple_product) }
+    let!(:variant_tagged) { create(:variant, product: product_tagged, tagged_enterprise: enterprise) }
+
+    before { login_to_admin_section }
+
+    it "displays variant tag in product listing" do
+      visit '/admin/products/bulk_edit'
+      first("a.view-variants").trigger('click')
+
+      binding.pry
+
+      expect(page).to have_select "variant_tagged_enterprise_id", with_options: [enterprise.name], selected: enterprise.name
     end
   end
 
