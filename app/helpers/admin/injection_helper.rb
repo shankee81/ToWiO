@@ -26,7 +26,7 @@ module Admin
     end
 
     def admin_inject_producers
-      admin_inject_json_ams_array "ofn.admin", "producers", @producers, Api::Admin::IdNameSerializer
+      admin_inject_json_ams_array "ofn.admin", "producers", @producers, Api::Admin::ProducerSerializer
     end
 
     def admin_inject_taxons

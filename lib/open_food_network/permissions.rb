@@ -25,6 +25,10 @@ module OpenFoodNetwork
       managed_and_related_enterprises_with :manage_products
     end
 
+    def taggable_enterprises(producer)
+      Enterprise.scoped # Stub
+    end
+
 
     private
 
