@@ -184,7 +184,7 @@ describe "filtering products for submission to database", ->
       created_at: null
       updated_at: null
       count_on_hand: 0
-      producer: 5
+      producer_id: 5
 
       group_buy: null
       group_buy_unit_size: null
@@ -1050,7 +1050,7 @@ describe "AdminProductEditCtrl", ->
         product:
           id: 17
           name: "new_product"
-          producer: 6
+          producer_id: 6
 
           variants: [
             id: 3
@@ -1060,7 +1060,7 @@ describe "AdminProductEditCtrl", ->
       $httpBackend.expectGET("/api/products/17?template=bulk_show").respond 200,
         id: 17
         name: "new_product"
-        producer: 6
+        producer_id: 6
 
         variants: [
           id: 3
@@ -1073,7 +1073,7 @@ describe "AdminProductEditCtrl", ->
         id: 17
         name: "new_product"
         variant_unit_with_scale: null
-        producer: 6
+        producer_id: 6
 
         variants: [
           id: 3
@@ -1090,7 +1090,7 @@ describe "AdminProductEditCtrl", ->
           id: 17
           name: "new_product"
           variant_unit_with_scale: null
-          producer: 6
+          producer_id: 6
 
           variants: [
             id: 3
