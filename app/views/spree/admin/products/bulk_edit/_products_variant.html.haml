@@ -4,7 +4,7 @@
     %a{ :class => "add-variant icon-plus-sign", 'ng-click' => "addVariant(product)", 'ng-show' => "$last" }
   %td{ 'ng-show' => 'columns.producer.visible' }
     %span.variant-enterprise-tag
-      %select.select2.fullwidth{ 'ng-model' => 'variant.tagged_enterprise_id', :name => 'variant_tagged_enterprise_id', 'ofn-track-variant' => 'tagged_enterprise_id', 'ng-options' => 'producer.id as producer.name for producer in producers' }
+      %select.select2.fullwidth{ 'ng-model' => 'variant.tagged_enterprise_id', :name => 'variant_tagged_enterprise_id', 'ofn-track-variant' => 'tagged_enterprise_id', 'ng-options' => 'enterprise.id as enterprise.name for enterprise in product.producer.taggable_enterprises' }
   %td{ 'ng-show' => 'columns.name.visible' }
     %input{ 'ng-model' => 'variant.display_name', :name => 'variant_display_name', 'ofn-track-variant' => 'display_name', :type => 'text', placeholder: "{{ product.name }}" }
   %td.unit_value{ 'ng-show' => 'columns.unit.visible' }

@@ -6,7 +6,7 @@ feature %q{
 } , js: true do
   include AuthenticationWorkflow
   include WebHelper
-  
+
   describe "listing products" do
     before do
       login_to_admin_section
@@ -728,23 +728,6 @@ feature %q{
     end
   end
 
-  describe "tagged variants" do
-    let(:enterprise) { create(:supplier_enterprise) }
-    let(:product_tagged) { create(:simple_product) }
-    let!(:variant_tagged) { create(:variant, product: product_tagged, tagged_enterprise: enterprise) }
-
-    before { login_to_admin_section }
-
-    it "displays variant tag in product listing" do
-      visit '/admin/products/bulk_edit'
-      first("a.view-variants").trigger('click')
-
-      binding.pry
-
-      expect(page).to have_select "variant_tagged_enterprise_id", with_options: [enterprise.name], selected: enterprise.name
-    end
-  end
-
   context "as an enterprise manager" do
     let(:supplier_managed1) { create(:supplier_enterprise, name: 'Supplier Managed 1') }
     let(:supplier_managed2) { create(:supplier_enterprise, name: 'Supplier Managed 2') }
@@ -761,8 +744,6 @@ feature %q{
       create(:enterprise_relationship, parent: supplier_permitted, child: supplier_managed1,
              permissions_list: [:manage_products])
     end
-
-    use_short_wait
 
     before do
       @enterprise_user = create_enterprise_user
@@ -831,6 +812,22 @@ feature %q{
       expect(p.master.display_as).to eq "Big Bag"
       expect(p.price).to eq 20.0
       expect(p.on_hand).to eq 18
+    end
+
+
+    describe "tagged variants" do
+      # In this case, we are the manager of a producer
+      # Producers can tag hubs that have a trading relationship with them
+      let!(:product_tagged) { create(:simple_product, supplier: supplier_managed1) }
+      let!(:variant_tagged) { create(:variant, product: product_tagged, tagged_enterprise: distributor_managed) }
+      let!(:er) { create(:enterprise_relationship, parent: supplier_managed1, child: distributor_managed) }
+
+      it "displays variant tag in product listing" do
+        visit '/admin/products/bulk_edit'
+        within("#p_#{product_tagged.id}") { first("a.view-variants").trigger('click') }
+
+        expect(page).to have_select "variant_tagged_enterprise_id", with_options: [distributor_managed.name], selected: distributor_managed.name
+      end
     end
   end
 end

@@ -90,5 +90,7 @@ Spree::Admin::ProductsController.class_eval do
     @spree_api_key = spree_current_user.spree_api_key
     @producers = OpenFoodNetwork::Permissions.new(spree_current_user).managed_product_enterprises.is_primary_producer.by_name
     @taxons = Spree::Taxon.order(:name)
+    @my_enterprises = []
+    @all_enterprises = Enterprise.by_name
   end
 end
