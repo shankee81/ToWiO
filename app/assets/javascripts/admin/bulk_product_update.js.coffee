@@ -1,4 +1,4 @@
-angular.module("ofn.admin").controller "AdminProductEditCtrl", ($scope, $timeout, $http, BulkProducts, DisplayProperties, dataFetcher, DirtyProducts, VariantUnitManager, producers, Taxons) ->
+angular.module("ofn.admin").controller "AdminProductEditCtrl", ($scope, $timeout, $http, BulkProducts, DisplayProperties, dataFetcher, DirtyProducts, VariantUnitManager, Producers, Taxons) ->
     $scope.updateStatusMessage =
       text: ""
       style: {}
@@ -28,7 +28,7 @@ angular.module("ofn.admin").controller "AdminProductEditCtrl", ($scope, $timeout
       filters:        { title: "Filter Products",   visible: false }
 
 
-    $scope.producers = producers
+    $scope.producers = Producers.producers
     $scope.taxons = Taxons.taxons
     $scope.filterProducers = [{id: "0", name: ""}].concat $scope.producers
     $scope.filterTaxons = [{id: "0", name: ""}].concat $scope.taxons
