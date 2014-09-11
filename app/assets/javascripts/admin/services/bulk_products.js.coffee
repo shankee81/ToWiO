@@ -1,4 +1,4 @@
-angular.module("ofn.admin").factory "BulkProducts", (dataFetcher) ->
+angular.module("ofn.admin").factory "BulkProducts", (producers, dataFetcher) ->
   new class BulkProducts
     products: []
 
@@ -44,8 +44,12 @@ angular.module("ofn.admin").factory "BulkProducts", (dataFetcher) ->
         @products.push product
 
     unpackProduct: (product) ->
-      #$scope.matchProducer product
+      @matchProducer product
       @loadVariantUnit product
+
+    matchProducer: (product) ->
+      producers = (producer for producer in producers when producer.id = product.producer_id)
+      product.producer = producers[0] if producers?
 
     loadVariantUnit: (product) ->
       product.variant_unit_with_scale =

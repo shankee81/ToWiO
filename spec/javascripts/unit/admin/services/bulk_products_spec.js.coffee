@@ -1,12 +1,17 @@
 describe "BulkProducts service", ->
   BulkProducts = $httpBackend = null
+  producer = {id: 123, name: "Producer"}
 
   beforeEach ->
     module "ofn.admin"
+    module ($provide) ->
+      $provide.value "producers", [producer]
+      null
 
   beforeEach inject (_BulkProducts_, _$httpBackend_) ->
     BulkProducts = _BulkProducts_
     $httpBackend = _$httpBackend_
+
 
   describe "fetching products", ->
     beforeEach ->
@@ -72,14 +77,25 @@ describe "BulkProducts service", ->
 
 
   describe "preparing products", ->
+    product = {id: 123}
+
     beforeEach ->
+      spyOn BulkProducts, "matchProducer"
       spyOn BulkProducts, "loadVariantUnit"
+      BulkProducts.unpackProduct product
+
+    it "calls matchProducer for the product", ->
+      expect(BulkProducts.matchProducer).toHaveBeenCalled()
 
     it "calls loadVariantUnit for the product", ->
-      product = {id: 123}
-      BulkProducts.unpackProduct product
       expect(BulkProducts.loadVariantUnit).toHaveBeenCalled()
 
+
+  describe "dereferencing producer", ->
+    it "matches the producer", ->
+      product = {producer_id: 123}
+      BulkProducts.matchProducer product
+      expect(product.producer).toEqual producer
 
   describe "loading variant unit", ->
     describe "setting product variant_unit_with_scale field", ->
