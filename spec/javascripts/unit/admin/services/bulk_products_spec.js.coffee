@@ -6,6 +6,8 @@ describe "BulkProducts service", ->
     module "ofn.admin"
     module ($provide) ->
       $provide.value "producers", [producer]
+      $provide.value "my_enterprises", []
+      $provide.value "all_enterprises", []
       null
 
   beforeEach inject (_BulkProducts_, _$httpBackend_) ->

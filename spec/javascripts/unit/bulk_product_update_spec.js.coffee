@@ -237,6 +237,8 @@ describe "AdminProductEditCtrl", ->
     module "ofn.admin"
     module ($provide)->
       $provide.value "producers", []
+      $provide.value "my_enterprises", []
+      $provide.value "all_enterprises", []
       $provide.value "taxons", []
       null
 
