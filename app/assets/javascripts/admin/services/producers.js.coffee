@@ -2,9 +2,9 @@ angular.module("ofn.admin").factory "Producers", (producers, Enterprises) ->
   new class Producers
     constructor: ->
       @producers = producers
-      @dereferenceProducers()
+      @dereferenceTaggableEnterprises()
 
-    dereferenceProducers: ->
+    dereferenceTaggableEnterprises: ->
       for producer in @producers
         if producer.taggable_enterprise_ids?
           producer.taggable_enterprises =
