@@ -5,6 +5,9 @@ Openfoodnetwork::Application.routes.draw do
 
   get "/map", to: "map#index", as: :map
 
+  get "/register", to: "registration#index", as: :registration
+  get "/register/auth", to: "registration#authenticate", as: :registration_auth
+
   resource :shop, controller: "shop" do
     get :products
     post :order_cycle
@@ -31,6 +34,8 @@ Openfoodnetwork::Application.routes.draw do
     end
   end
 
+  devise_for :enterprise, controllers: { confirmations: 'enterprise_confirmations' }
+
   namespace :admin do
     resources :order_cycles do
       post :bulk_update, on: :collection, as: :bulk_update
@@ -41,6 +46,10 @@ Openfoodnetwork::Application.routes.draw do
       collection do
         get :for_order_cycle
         post :bulk_update, as: :bulk_update
+      end
+
+      member do
+        put :set_sells
       end
 
       resources :producer_properties do
@@ -63,6 +72,7 @@ Openfoodnetwork::Application.routes.draw do
 
   namespace :api do
     resources :enterprises do
+      post :update_image, on: :member
       get :managed, on: :collection
       get :accessible, on: :collection
     end

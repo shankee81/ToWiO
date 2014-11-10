@@ -37,7 +37,15 @@ module Admin
       admin_inject_json_ams_array "ofn.admin", "users", @users, Api::Admin::UserSerializer
     end
 
+    def admin_inject_spree_api_key
+      render partial: "admin/json/injection_ams", locals: {ngModule: 'ofn.admin', name: 'SpreeApiKey', json: "'#{@spree_api_key.to_s}'"}
+    end
 
+    def admin_inject_enterprise_long_description
+      # Clean line breaks and quotes.
+      long_description = @enterprise.long_description.blank? ? "" : @enterprise.long_description.gsub("\r\n", "<br />").gsub("\"", "&#34;").gsub("'","&#39;")
+      render partial: "admin/json/injection_ams", locals: {ngModule: 'admin.enterprises', name: 'longDescription', json: "'#{long_description}'"}
+    end
 
 
     def admin_inject_json_ams(ngModule, name, data, serializer, opts = {})

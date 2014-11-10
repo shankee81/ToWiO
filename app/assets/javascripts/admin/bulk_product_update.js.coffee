@@ -1,4 +1,6 @@
-angular.module("ofn.admin").controller "AdminProductEditCtrl", ($scope, $timeout, $http, BulkProducts, DisplayProperties, dataFetcher, DirtyProducts, VariantUnitManager, Producers, Taxons) ->
+angular.module("ofn.admin").controller "AdminProductEditCtrl", ($scope, $timeout, $http, BulkProducts, DisplayProperties, dataFetcher, DirtyProducts, VariantUnitManager, Producers, Taxons, SpreeApiKey) ->
+    $scope.loading = true
+
     $scope.updateStatusMessage =
       text: ""
       style: {}
@@ -40,14 +42,15 @@ angular.module("ofn.admin").controller "AdminProductEditCtrl", ($scope, $timeout
     $scope.limit = 15
     $scope.productsWithUnsavedVariants = []
     $scope.DisplayProperties = DisplayProperties
+    $scope.query = ""
 
-    $scope.initialise = (spree_api_key) ->
+    $scope.initialise = ->
       authorise_api_reponse = ""
-      dataFetcher("/api/users/authorise_api?token=" + spree_api_key).then (data) ->
+      dataFetcher("/api/users/authorise_api?token=" + SpreeApiKey).then (data) ->
         authorise_api_reponse = data
         $scope.spree_api_key_ok = data.hasOwnProperty("success") and data["success"] == "Use of API Authorised"
         if $scope.spree_api_key_ok
-          $http.defaults.headers.common["X-Spree-Token"] = spree_api_key
+          $http.defaults.headers.common["X-Spree-Token"] = SpreeApiKey
           $scope.fetchProducts()
         else if authorise_api_reponse.hasOwnProperty("error")
           $scope.api_error_msg = authorise_api_reponse("error")
