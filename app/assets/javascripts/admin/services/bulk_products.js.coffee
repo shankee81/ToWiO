@@ -48,7 +48,7 @@ angular.module("ofn.admin").factory "BulkProducts", (Producers, dataFetcher) ->
       @loadVariantUnit product
 
     matchProducer: (product) ->
-      producers = (producer for producer in Producers.producers when producer.id = product.producer_id)
+      producers = (producer for producer in Producers.producers when producer.id == product.producer_id)
       product.producer = producers[0] if producers?
 
     loadVariantUnit: (product) ->
