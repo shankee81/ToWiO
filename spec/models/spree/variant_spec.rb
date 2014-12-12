@@ -379,6 +379,34 @@ module Spree
     end
   end
 
+  # Some fields (price and on_hand at present) can be overriden by VariantOverride objects. We
+  # want to stop unwitting access to the original methods, which can be intentionally accessed
+  # via global_* aliases.
+  describe "protecting fields overridden by VariantOverrides" do
+    let(:v) { Variant.new }
+
+    # Getters
+    [:count_on_hand, :on_hand, :in_stock, :in_stock?, :default_price, :price, :display_price, :display_amount].each do |m|
+      it "raises an exception for #{m}" do
+        expect { v.send m }.to raise_error Variant::ProtectedAttributeError
+      end
+    end
+
+    # Getters requiring currency
+    [:price_in, :amount_in].each do |m|
+      it "raises an exception for #{m}" do
+        expect { v.send m, Spree::Config.currency }.to raise_error Variant::ProtectedAttributeError
+      end
+    end
+
+    # Setters
+    [:on_hand=, :count_on_hand=, :price=].each do |m|
+      it "raises an exception for #{m}" do
+        expect { v.send m, 123 }.to raise_error Variant::ProtectedAttributeError
+      end
+    end
+  end
+
   describe "destruction" do
     it "destroys exchange variants" do
       v = create(:variant)
