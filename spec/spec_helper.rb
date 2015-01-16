@@ -21,12 +21,12 @@ WebMock.disable_net_connect!(:allow_localhost => true)
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
 Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
-require 'spree/core/testing_support/controller_requests'
-require 'spree/core/testing_support/capybara_ext'
+require 'spree/testing_support/controller_requests'
+require 'spree/testing_support/capybara_ext'
 require 'spree/api/testing_support/setup'
 require 'spree/api/testing_support/helpers'
 require 'spree/api/testing_support/helpers_decorator'
-require 'spree/core/testing_support/authorization_helpers'
+require 'spree/testing_support/authorization_helpers'
 
 # Capybara config
 require 'capybara/poltergeist'
@@ -84,7 +84,7 @@ RSpec.configure do |config|
   config.include Rails.application.routes.url_helpers
   config.include Spree::UrlHelpers
   config.include Spree::CheckoutHelpers
-  config.include Spree::Core::TestingSupport::ControllerRequests, :type => :controller
+  config.include Spree::TestingSupport::ControllerRequests, :type => :controller
   config.include Devise::TestHelpers, :type => :controller
   config.extend  Spree::Api::TestingSupport::Setup, :type => :controller
   config.include Spree::Api::TestingSupport::Helpers, :type => :controller
