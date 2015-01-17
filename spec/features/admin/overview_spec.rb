@@ -4,8 +4,8 @@ feature %q{
   As a backend user
   I want to be given information about the state of my enterprises, products and order cycles
 } , js: true do
+  include Spree::TestingSupport::AuthorizationHelpers
   include AuthenticationWorkflow
-  include AuthorizationHelpers
   include WebHelper
 
   stub_authorization!
