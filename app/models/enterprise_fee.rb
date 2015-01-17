@@ -1,12 +1,11 @@
 class EnterpriseFee < ActiveRecord::Base
+  include Spree::Core::CalculatedAdjustments
   belongs_to :enterprise
   has_and_belongs_to_many :order_cycles, join_table: 'coordinator_fees'
   has_many :exchange_fees, dependent: :destroy
   has_many :exchanges, through: :exchange_fees
 
   before_destroy { order_cycles.clear }
-
-  calculated_adjustments
 
   attr_accessible :enterprise_id, :fee_type, :name, :calculator_type
 
