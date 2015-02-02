@@ -25,24 +25,9 @@ describe DistributionChangeValidator do
   end
 
   describe "finding variants that are available through a particular distribution" do
-    it "finds variants distributed by product distribution" do
-      v = double(:variant)
-      d = double(:distributor, product_distribution_variants: [v])
-      oc = double(:order_cycle, variants_distributed_by: [])
-
-      subject.variants_available_for_distribution(d, oc).should == [v]
-    end
-
-    it "finds variants distributed by product distribution when order cycle is nil" do
-      v = double(:variant)
-      d = double(:distributor, product_distribution_variants: [v])
-
-      subject.variants_available_for_distribution(d, nil).should == [v]
-    end
-
     it "finds variants distributed by order cycle" do
       v = double(:variant)
-      d = double(:distributor, product_distribution_variants: [])
+      d = double(:distributor)
       oc = double(:order_cycle)
 
       oc.should_receive(:variants_distributed_by).with(d) { [v] }
@@ -180,11 +165,6 @@ describe DistributionChangeValidator do
       subject.order_cycle_available_for?(product).should be_true
     end
 
-    it "returns true when the product doesn't require an order cycle" do
-      subject.stub(:product_requires_order_cycle).and_return(false)
-      subject.order_cycle_available_for?(product).should be_true
-    end
-
     it "returns true when there's an order cycle that can cover the product" do
       subject.stub(:product_requires_order_cycle).and_return(true)
       subject.stub(:available_order_cycles_for).and_return([1])
@@ -247,18 +227,6 @@ describe DistributionChangeValidator do
       subject.should_receive(:available_order_cycles).and_return([2])
 
       subject.available_order_cycles_for(product).should == [2]
-    end
-  end
-
-  describe "determining if a product requires an order cycle" do
-    it "returns true when the product does not have any product distributions" do
-      product.stub(:product_distributions).and_return([])
-      subject.product_requires_order_cycle(product).should be_true
-    end
-
-    it "returns false otherwise" do
-      product.stub(:product_distributions).and_return([1])
-      subject.product_requires_order_cycle(product).should be_false
     end
   end
 end

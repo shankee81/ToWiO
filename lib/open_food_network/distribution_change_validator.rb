@@ -14,10 +14,7 @@ class DistributionChangeValidator
   end
 
   def variants_available_for_distribution(distributor, order_cycle)
-    product_distribution_variants = distributor.andand.product_distribution_variants || []
-    order_cycle_variants = order_cycle.andand.variants_distributed_by(distributor) || []
-
-    product_distribution_variants + order_cycle_variants
+    order_cycle.andand.variants_distributed_by(distributor) || []
   end
 
   def distributor_available_for?(product)
@@ -25,7 +22,7 @@ class DistributionChangeValidator
   end
 
   def order_cycle_available_for?(product)
-    @order.nil? || !product_requires_order_cycle(product) || available_order_cycles_for(product).present?
+    @order.nil? || available_order_cycles_for(product).present?
   end
 
   def available_distributors_for(product)
@@ -46,10 +43,6 @@ class DistributionChangeValidator
     end
 
     order_cycles
-  end
-
-  def product_requires_order_cycle(product)
-    product.product_distributions.blank?
   end
 
   def all_available_distributors
