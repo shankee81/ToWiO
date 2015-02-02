@@ -12,7 +12,6 @@ module OpenFoodNetwork
         @distributor_address = create(:address, :address1 => "distributor address", :city => 'The Shire', :zipcode => "1234")
         @distributor = create(:distributor_enterprise, :address => @distributor_address)
         product = create(:product)
-        product_distribution = create(:product_distribution, :product => product, :distributor => @distributor)
         @shipping_instructions = "pick up on thursday please!"
         @order = create(:order, :distributor => @distributor, :bill_address => @bill_address, :special_instructions => @shipping_instructions)
         @payment_method = create(:payment_method, :distributors => [@distributor])
