@@ -31,14 +31,14 @@ describe EnterprisesController do
 
     it "should not empty an order if returning to the same distributor" do
       product = create(:product)
-      create(:product_distribution, product: product, distributor: @current_distributor)
+      oc = create(:simple_order_cycle, distributors: [@current_distributor], variants: [product.master])
       line_item = create(:line_item, variant: product.master)
       controller.current_order.line_items << line_item
 
       spree_get :shop, {id: @current_distributor}
 
       controller.current_order.distributor.should == @current_distributor
-      controller.current_order.order_cycle.should be_nil
+      controller.current_order.order_cycle.should == oc
       controller.current_order.line_items.size.should == 1
     end
 
