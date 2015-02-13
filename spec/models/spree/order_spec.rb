@@ -4,7 +4,7 @@ describe Spree::Order do
   describe "setting variant attributes" do
     it "sets attributes on line items for variants" do
       d = create(:distributor_enterprise)
-      p = create(:product, :distributors => [d])
+      p = create(:product)
 
       subject.distributor = d
       subject.save!
@@ -21,7 +21,7 @@ describe Spree::Order do
     end
   end
 
-  describe "Payment methods" do
+  describe "payment methods" do
     let(:order_distributor) { create(:distributor_enterprise) }
     let(:some_other_distributor) { create(:distributor_enterprise) }
     let(:order) { build(:order, distributor: order_distributor) }
@@ -41,30 +41,6 @@ describe Spree::Order do
 
     it "clears all enterprise fee adjustments on the order" do
       EnterpriseFee.should_receive(:clear_all_adjustments_on_order).with(subject)
-      subject.update_distribution_charge!
-    end
-
-    it "ensures the correct adjustment(s) are created for the product distribution" do
-      EnterpriseFee.stub(:clear_all_adjustments_on_order)
-      line_item = double(:line_item)
-      subject.stub(:line_items) { [line_item] }
-      subject.stub(:provided_by_order_cycle?) { false }
-
-      product_distribution = double(:product_distribution)
-      product_distribution.should_receive(:create_adjustment_for).with(line_item)
-      subject.stub(:product_distribution_for) { product_distribution }
-
-      subject.update_distribution_charge!
-    end
-
-    it "skips line items that don't have a product distribution" do
-      EnterpriseFee.stub(:clear_all_adjustments_on_order)
-      line_item = double(:line_item)
-      subject.stub(:line_items) { [line_item] }
-      subject.stub(:provided_by_order_cycle?) { false }
-
-      subject.stub(:product_distribution_for) { nil }
-
       subject.update_distribution_charge!
     end
 
@@ -133,17 +109,6 @@ describe Spree::Order do
 
         subject.send(:provided_by_order_cycle?, line_item).should be_false
       end
-    end
-
-    it "looks up product distribution enterprise fees for a line item" do
-      product = double(:product)
-      variant = double(:variant, product: product)
-      line_item = double(:line_item, variant: variant)
-
-      product_distribution = double(:product_distribution)
-      product.should_receive(:product_distribution_for).with(subject.distributor) { product_distribution }
-
-      subject.send(:product_distribution_for, line_item).should == product_distribution
     end
   end
 
@@ -398,7 +363,6 @@ describe Spree::Order do
 
   context "validating distributor changes" do
     it "checks that a distributor is available when changing" do
-      set_feature_toggle :order_cycles, false
       order_enterprise = FactoryGirl.create(:enterprise, id: 1, :name => "Order Enterprise")
       subject.distributor = order_enterprise
       product1 = FactoryGirl.create(:product)
@@ -410,25 +374,21 @@ describe Spree::Order do
       variant31 = FactoryGirl.create(:variant, product: product3)
       variant32 = FactoryGirl.create(:variant, product: product3)
 
-      # Product Distributions
-      # Order Enterprise sells product 1 and product 3
-      FactoryGirl.create(:product_distribution, product: product1, distributor: order_enterprise)
-      FactoryGirl.create(:product_distribution, product: product3, distributor: order_enterprise)
+      create(:simple_order_cycle, distributors: [order_enterprise], variants: [variant11, variant12, variant31])
 
       # Build the current order
       line_item1 = FactoryGirl.create(:line_item, order: subject, variant: variant11)
       line_item2 = FactoryGirl.create(:line_item, order: subject, variant: variant12)
       line_item3 = FactoryGirl.create(:line_item, order: subject, variant: variant31)
       subject.reload
-      subject.line_items = [line_item1,line_item2,line_item3]
+      subject.line_items = [line_item1, line_item2, line_item3]
 
       test_enterprise = FactoryGirl.create(:enterprise, id: 2, :name => "Test Enterprise")
-      # Test Enterprise sells only product 1
-      FactoryGirl.create(:product_distribution, product: product1, distributor: test_enterprise)
+      create(:simple_order_cycle, distributors: [test_enterprise], variants: [product1.master])
 
       subject.distributor = test_enterprise
       subject.should_not be_valid
-      subject.errors.messages.should == {:distributor_id => ["cannot supply the products in your cart"]}
+      subject.errors.messages.should == {base: ["Distributor or order cycle cannot supply the products in your cart"]}
     end
   end
 
