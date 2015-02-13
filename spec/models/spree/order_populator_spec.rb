@@ -86,10 +86,6 @@ module Spree
           op.instance_variable_set :@order_cycle,  double(:order_cycle)
           op.send(:check_order_cycle_provided_for, variant).should be_true
         end
-        it "returns true when order cycle is not required" do
-          op.stub(:order_cycle_required_for).and_return false
-          op.send(:check_order_cycle_provided_for, variant).should be_true
-        end
       end
 
       describe "checking variant is available under the distributor" do
@@ -118,20 +114,6 @@ module Spree
 
 
     describe "support" do
-      describe "checking if order cycle is required for a variant" do
-        it "requires an order cycle when the product has no product distributions" do
-          product = double(:product, product_distributions: [])
-          variant = double(:variant, product: product)
-          op.send(:order_cycle_required_for, variant).should be_true
-        end
-
-        it "does not require an order cycle when the product has product distributions" do
-          product = double(:product, product_distributions: [1])
-          variant = double(:variant, product: product)
-          op.send(:order_cycle_required_for, variant).should be_false
-        end
-      end
-
       it "provides the distributor and order cycle for the order" do
         order.should_receive(:distributor).and_return(distributor)
         order.should_receive(:order_cycle).and_return(order_cycle)
