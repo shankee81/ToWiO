@@ -6,8 +6,8 @@ module Spree
       before { login_as_admin }
 
       describe "search action" do
-        let!(:p1) { create(:simple_product, name: 'Product 1') }
-        let!(:p2) { create(:simple_product, name: 'Product 2') }
+        let!(:p1) { create(:product, name: 'Product 1') }
+        let!(:p2) { create(:product, name: 'Product 2') }
         let!(:d)  { create(:distributor_enterprise) }
         let!(:oc) { create(:simple_order_cycle, distributors: [d], variants: [p1.master]) }
 

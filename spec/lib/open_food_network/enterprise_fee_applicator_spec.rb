@@ -5,7 +5,7 @@ module OpenFoodNetwork
     it "creates an adjustment for a line item" do
       line_item = create(:line_item)
       enterprise_fee = create(:enterprise_fee)
-      product = create(:simple_product)
+      product = create(:product)
 
       efa = EnterpriseFeeApplicator.new enterprise_fee, product.master, 'role'
       efa.stub(:line_item_adjustment_label) { 'label' }
@@ -28,7 +28,7 @@ module OpenFoodNetwork
     it "creates an adjustment for an order" do
       order = create(:order)
       enterprise_fee = create(:enterprise_fee)
-      product = create(:simple_product)
+      product = create(:product)
 
       efa = EnterpriseFeeApplicator.new enterprise_fee, nil, 'role'
       efa.stub(:order_adjustment_label) { 'label' }

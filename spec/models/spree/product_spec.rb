@@ -15,11 +15,11 @@ module Spree
       end
 
       it "requires a primary taxon" do
-        build(:simple_product, taxons: [], primary_taxon: nil).should_not be_valid
+        build(:product, taxons: [], primary_taxon: nil).should_not be_valid
       end
 
       it "requires a supplier" do
-        build(:simple_product, supplier: nil).should_not be_valid
+        build(:product, supplier: nil).should_not be_valid
       end
 
       it "does not save when master is invalid" do
@@ -57,7 +57,7 @@ module Spree
 
       context "when the product has variants" do
         let(:product) do
-          product = create(:simple_product)
+          product = create(:product)
           create(:variant, product: product)
           product.reload
         end
@@ -103,7 +103,7 @@ module Spree
       end
 
       context "when product does not have variants" do
-        let(:product) { create(:simple_product) }
+        let(:product) { create(:product) }
 
         it "does not require any variant unit fields" do
           product.variant_unit = nil
@@ -314,7 +314,7 @@ module Spree
 
     describe "properties" do
       it "returns product properties as a hash" do
-        product = create(:simple_product)
+        product = create(:product)
         product.set_property 'Organic Certified', 'NASAA 12345'
 
         product.properties_h.should == [{presentation: 'Organic Certified', value: 'NASAA 12345'}]
@@ -322,7 +322,7 @@ module Spree
 
       it "returns producer properties as a hash" do
         supplier = create(:supplier_enterprise)
-        product = create(:simple_product, supplier: supplier)
+        product = create(:product, supplier: supplier)
 
         supplier.set_producer_property 'Organic Certified', 'NASAA 54321'
 
@@ -331,7 +331,7 @@ module Spree
 
       it "overrides producer properties with product properties" do
         supplier = create(:supplier_enterprise)
-        product = create(:simple_product, supplier: supplier)
+        product = create(:product, supplier: supplier)
 
         product.set_property 'Organic Certified', 'NASAA 12345'
         supplier.set_producer_property 'Organic Certified', 'NASAA 54321'
@@ -341,7 +341,7 @@ module Spree
 
       it "sorts by position" do
         supplier = create(:supplier_enterprise)
-        product = create(:simple_product, supplier: supplier)
+        product = create(:product, supplier: supplier)
 
         pa = Spree::Property.create! name: 'A', presentation: 'A'
         pb = Spree::Property.create! name: 'B', presentation: 'B'
@@ -396,7 +396,7 @@ module Spree
 
     describe "variant units" do
       context "when the product initially has no variant unit" do
-        let!(:p) { create(:simple_product,
+        let!(:p) { create(:product,
                           variant_unit: nil,
                           variant_unit_scale: nil,
                           variant_unit_name: nil) }
@@ -453,7 +453,7 @@ module Spree
       end
 
       context "when the product already has a variant unit set (and all required option types exist)" do
-        let!(:p) { create(:simple_product,
+        let!(:p) { create(:product,
                           variant_unit: 'weight',
                           variant_unit_scale: 1,
                           variant_unit_name: nil) }
@@ -508,7 +508,7 @@ module Spree
 
       describe "returning the variant unit option type" do
         it "returns nil when variant_unit is not set" do
-          p = create(:simple_product, variant_unit: nil)
+          p = create(:product, variant_unit: nil)
           p.variant_unit_option_type.should be_nil
         end
       end
@@ -527,7 +527,7 @@ module Spree
       describe "removing an option type" do
         it "removes the associated option values from all variants" do
           # Given a product with a variant unit option type and values
-          p = create(:simple_product, variant_unit: 'weight', variant_unit_scale: 1)
+          p = create(:product, variant_unit: 'weight', variant_unit_scale: 1)
           v1 = create(:variant, product: p, unit_value: 100, option_values: [])
           v2 = create(:variant, product: p, unit_value: 200, option_values: [])
 
@@ -554,14 +554,14 @@ module Spree
 
     describe "stock filtering" do
       it "considers products that are on_demand as being in stock" do
-        product = create(:simple_product, on_demand: true)
+        product = create(:product, on_demand: true)
         product.master.update_attribute(:count_on_hand, 0)
         product.has_stock?.should == true
       end
 
       describe "finding products in stock for a particular distribution" do
         it "returns in-stock products without variants" do
-          p = create(:simple_product)
+          p = create(:product)
           p.master.update_attribute(:count_on_hand, 1)
           d = create(:distributor_enterprise)
           oc = create(:simple_order_cycle, distributors: [d])
@@ -571,7 +571,7 @@ module Spree
         end
 
         it "returns on-demand products" do
-          p = create(:simple_product, on_demand: true)
+          p = create(:product, on_demand: true)
           p.master.update_attribute(:count_on_hand, 0)
           d = create(:distributor_enterprise)
           oc = create(:simple_order_cycle, distributors: [d])
@@ -581,7 +581,7 @@ module Spree
         end
 
         it "returns products with in-stock variants" do
-          p = create(:simple_product)
+          p = create(:product)
           v = create(:variant, product: p)
           v.update_attribute(:count_on_hand, 1)
           d = create(:distributor_enterprise)
@@ -592,7 +592,7 @@ module Spree
         end
 
         it "returns products with on-demand variants" do
-          p = create(:simple_product)
+          p = create(:product)
           v = create(:variant, product: p, on_demand: true)
           v.update_attribute(:count_on_hand, 0)
           d = create(:distributor_enterprise)
@@ -603,7 +603,7 @@ module Spree
         end
 
         it "does not return products that have stock not in the distribution" do
-          p = create(:simple_product)
+          p = create(:product)
           p.master.update_attribute(:count_on_hand, 1)
           d = create(:distributor_enterprise)
           oc = create(:simple_order_cycle, distributors: [d])
@@ -616,7 +616,7 @@ module Spree
     describe "taxons" do
       let(:taxon1) { create(:taxon) }
       let(:taxon2) { create(:taxon) }
-      let(:product) { create(:simple_product) }
+      let(:product) { create(:product) }
 
       it "returns the first taxon as the primary taxon" do
         product.taxons.should == [product.primary_taxon]
@@ -624,7 +624,7 @@ module Spree
     end
 
     describe "deletion" do
-      let(:p)  { create(:simple_product) }
+      let(:p)  { create(:product) }
       let(:v)  { create(:variant, product: p) }
       let(:oc) { create(:simple_order_cycle) }
       let(:s)  { create(:supplier_enterprise) }

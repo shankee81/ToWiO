@@ -9,7 +9,7 @@ feature %q{
 
   scenario "creating a new variant" do
     # Given a product with a unit-related option type
-    p = create(:simple_product, variant_unit: "weight", variant_unit_scale: "1")
+    p = create(:product, variant_unit: "weight", variant_unit_scale: "1")
 
     # When I create a variant on the product
     login_to_admin_section
@@ -27,7 +27,7 @@ feature %q{
 
   scenario "editing unit value and description for a variant" do
     # Given a product with unit-related option types, with a variant
-    p = create(:simple_product, variant_unit: "weight", variant_unit_scale: "1")
+    p = create(:product, variant_unit: "weight", variant_unit_scale: "1")
     v = create(:variant, product: p, unit_value: 1, unit_description: 'foo')
 
     # And the product has option types for the unit-related and non-unit-related option values
@@ -59,7 +59,7 @@ feature %q{
 
   it "does not show unit value or description fields when the product does not have a unit-related option type" do
     # Given a product without unit-related option types, with a variant
-    p = create(:simple_product, variant_unit: nil, variant_unit_scale: nil)
+    p = create(:product, variant_unit: nil, variant_unit_scale: nil)
     v = create(:variant, product: p, unit_value: nil, unit_description: nil)
 
     # And the product has option types for the variant's option values
@@ -76,7 +76,7 @@ feature %q{
   end
 
   it "soft-deletes variants", js: true do
-    p = create(:simple_product)
+    p = create(:product)
     v = create(:variant, product: p)
 
     login_to_admin_section

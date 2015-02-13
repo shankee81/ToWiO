@@ -27,7 +27,7 @@ feature 'Home', js: true do
   end
 
   it "should grey out hubs that are not in an order cycle" do
-    create(:simple_product, distributors: [d1, d2])
+    create(:product, distributors: [d1, d2])
     visit root_path
     page.should have_selector 'hub.inactive'
     page.should have_selector 'hub.inactive',   text: d2.name

@@ -9,7 +9,7 @@ feature %q{
   let!(:producer) { create(:supplier_enterprise) }
   let!(:invisible_producer) { create(:supplier_enterprise, visible: false) }
   let(:taxon) { create(:taxon) }
-  let!(:product) { create(:simple_product, supplier: producer, taxons: [taxon]) }
+  let!(:product) { create(:product, supplier: producer, taxons: [taxon]) }
 
   before do
     visit producers_path

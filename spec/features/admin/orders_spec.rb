@@ -9,7 +9,7 @@ feature %q{
 
   background do
     @user = create(:user)
-    @product = create(:simple_product)
+    @product = create(:product)
     @distributor = create(:distributor_enterprise)
     @order_cycle = create(:simple_order_cycle, distributors: [@distributor], variants: [@product.master])
 
@@ -61,7 +61,7 @@ feature %q{
   end
 
   scenario "can't add products to an order outside the order's hub and order cycle", js: true do
-    product = create(:simple_product)
+    product = create(:product)
 
     login_to_admin_section
     visit '/admin/orders'

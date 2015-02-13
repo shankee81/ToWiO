@@ -1,7 +1,7 @@
 describe Api::ProductSerializer do
   let(:hub) { create(:distributor_enterprise) }
   let(:oc) { create(:simple_order_cycle, distributors: [hub], variants: [v1]) }
-  let(:p) { create(:simple_product) }
+  let(:p) { create(:product) }
   let!(:v1) { create(:variant, product: p, unit_value: 3) }
   let!(:v2) { create(:variant, product: p, unit_value: 5) }
 

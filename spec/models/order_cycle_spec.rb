@@ -167,8 +167,8 @@ describe OrderCycle do
   end
 
   it "checks for variants" do
-    p1 = create(:simple_product)
-    p2 = create(:simple_product)
+    p1 = create(:product)
+    p2 = create(:product)
     oc = create(:simple_order_cycle, suppliers: [p1.supplier], variants: [p1.master])
 
     oc.should have_variant(p1.master)
@@ -189,10 +189,10 @@ describe OrderCycle do
       @e2 = create(:exchange, incoming: false,
                   order_cycle: @oc, sender: @oc.coordinator, receiver: @d2)
 
-      @p0 = create(:simple_product)
-      @p1 = create(:simple_product)
+      @p0 = create(:product)
+      @p1 = create(:product)
       @p1_v_deleted = create(:variant, product: @p1, deleted_at: Time.now)
-      @p2 = create(:simple_product)
+      @p2 = create(:product)
       @p2_v = create(:variant, product: @p2)
 
       @e0.variants << @p0.master

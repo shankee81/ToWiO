@@ -68,7 +68,7 @@ describe EnterpriseFee do
 
   describe "clearing all enterprise fee adjustments for a line item" do
     it "clears adjustments originating from many different enterprise fees" do
-      p = create(:simple_product)
+      p = create(:product)
       d1, d2 = create(:distributor_enterprise), create(:distributor_enterprise)
       pd1 = create(:product_distribution, product: p, distributor: d1)
       pd2 = create(:product_distribution, product: p, distributor: d2)
@@ -82,7 +82,7 @@ describe EnterpriseFee do
     end
 
     it "does not clear adjustments originating from another source" do
-      p = create(:simple_product)
+      p = create(:product)
       pd = create(:product_distribution)
       line_item = create(:line_item, product: pd.product)
       tax_rate = create(:tax_rate, calculator: build(:calculator, preferred_amount: 10))
@@ -98,8 +98,8 @@ describe EnterpriseFee do
     it "clears adjustments from many fees and on all line items" do
       order = create(:order)
 
-      p1 = create(:simple_product)
-      p2 = create(:simple_product)
+      p1 = create(:product)
+      p2 = create(:product)
       d1, d2 = create(:distributor_enterprise), create(:distributor_enterprise)
       pd1 = create(:product_distribution, product: p1, distributor: d1)
       pd2 = create(:product_distribution, product: p1, distributor: d2)

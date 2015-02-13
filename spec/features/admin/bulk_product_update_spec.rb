@@ -534,8 +534,8 @@ feature %q{
   scenario "updating when a filter has been applied" do
     s1 = create(:supplier_enterprise)
     s2 = create(:supplier_enterprise)
-    p1 = FactoryGirl.create(:simple_product, :name => "product1", supplier: s1)
-    p2 = FactoryGirl.create(:simple_product, :name => "product2", supplier: s2)
+    p1 = FactoryGirl.create(:product, :name => "product1", supplier: s1)
+    p2 = FactoryGirl.create(:product, :name => "product2", supplier: s2)
     login_to_admin_section
 
     visit '/admin/products/bulk_edit'
@@ -668,7 +668,7 @@ feature %q{
   describe "using the page" do
     describe "using column display dropdown" do
       it "shows a column display dropdown, which shows a list of columns when clicked" do
-        FactoryGirl.create(:simple_product)
+        FactoryGirl.create(:product)
         login_to_admin_section
 
         visit '/admin/products/bulk_edit'
@@ -696,8 +696,8 @@ feature %q{
       it "displays basic filtering controls which filter the product list" do
         s1 = create(:supplier_enterprise)
         s2 = create(:supplier_enterprise)
-        p1 = FactoryGirl.create(:simple_product, :name => "product1", supplier: s1)
-        p2 = FactoryGirl.create(:simple_product, :name => "product2", supplier: s2)
+        p1 = FactoryGirl.create(:product, :name => "product1", supplier: s1)
+        p2 = FactoryGirl.create(:product, :name => "product2", supplier: s2)
         login_to_admin_section
 
         visit '/admin/products/bulk_edit'

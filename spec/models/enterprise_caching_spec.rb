@@ -7,7 +7,7 @@ describe Enterprise do
       let(:taxon) { create(:taxon) }
 
       describe "with a supplied product" do
-        let(:product) { create(:simple_product, supplier: enterprise) }
+        let(:product) { create(:product, supplier: enterprise) }
         let!(:classification) { create(:classification, taxon: taxon, product: product) }
         it "touches enterprise when a classification on that product changes" do
           expect{classification.save!}.to change{enterprise.updated_at}
@@ -15,7 +15,7 @@ describe Enterprise do
       end
 
       describe "with a distributed product" do
-        let(:product) { create(:simple_product) }
+        let(:product) { create(:product) }
         let!(:oc) { create(:simple_order_cycle, distributors: [enterprise], variants: [product.master]) }
         let!(:classification) { create(:classification, taxon: taxon, product: product) }
         it "touches enterprise when a classification on that product changes" do

@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe "admin/enterprises/for_order_cycle.rabl" do
   let(:enterprise)       { create(:distributor_enterprise) }
-  let!(:product)         { create(:simple_product, supplier: enterprise) }
-  let!(:deleted_product) { create(:simple_product, supplier: enterprise, deleted_at: 1.day.ago) }
+  let!(:product)         { create(:product, supplier: enterprise) }
+  let!(:deleted_product) { create(:product, supplier: enterprise, deleted_at: 1.day.ago) }
   let(:render)           { Rabl.render([enterprise], 'admin/enterprises/for_order_cycle', view_path: 'app/views', scope: RablHelper::FakeContext.instance) }
 
   describe "supplied products" do

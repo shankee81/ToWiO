@@ -35,10 +35,10 @@ feature %q{
     end
 
     context "when a hub is selected" do
-      let!(:product) { create(:simple_product, supplier: producer, variant_unit: 'weight', variant_unit_scale: 1) }
+      let!(:product) { create(:product, supplier: producer, variant_unit: 'weight', variant_unit_scale: 1) }
       let!(:variant) { create(:variant, product: product, unit_value: 1, price: 1.23, on_hand: 12) }
       let!(:producer2) { create(:supplier_enterprise) }
-      let!(:product2) { create(:simple_product, supplier: producer2) }
+      let!(:product2) { create(:product, supplier: producer2) }
       let!(:er2) { create(:enterprise_relationship, parent: producer2, child: hub2,
                          permissions_list: [:add_to_order_cycle]) }
 

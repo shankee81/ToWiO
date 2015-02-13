@@ -11,7 +11,7 @@ describe EnterprisesController do
   end
 
   describe "displaying an enterprise and its products" do
-    let(:p)   { create(:simple_product, supplier: s) }
+    let(:p)   { create(:product, supplier: s) }
     let(:s)   { create(:supplier_enterprise) }
     let!(:c)  { create(:distributor_enterprise) }
     let(:d1)  { create(:distributor_enterprise) }

@@ -8,8 +8,8 @@ module Spree
       let(:s1) { create(:supplier_enterprise) }
       let(:s2) { create(:supplier_enterprise) }
 
-      let(:p1) { create(:simple_product, supplier: s1) }
-      let(:p2) { create(:simple_product, supplier: s2) }
+      let(:p1) { create(:product, supplier: s1) }
+      let(:p2) { create(:product, supplier: s2) }
 
       let(:li1) { create(:line_item, order: o, product: p1) }
       let(:li2) { create(:line_item, order: o, product: p2) }

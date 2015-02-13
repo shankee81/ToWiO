@@ -7,13 +7,13 @@ describe "Shop API" do
     let(:distributor) { create(:distributor_enterprise, with_payment_and_shipping: true) }
     let(:supplier) { create(:supplier_enterprise) }
     let(:oc1) { create(:simple_order_cycle, distributors: [distributor], coordinator: create(:distributor_enterprise), orders_close_at: 2.days.from_now) }
-    let(:p1) { create(:simple_product, on_demand: false) }
-    let(:p2) { create(:simple_product, on_demand: true) }
-    let(:p3) { create(:simple_product, on_demand: false) }
-    let(:p4) { create(:simple_product, on_demand: false) }
-    let(:p5) { create(:simple_product, on_demand: false) }
-    let(:p6) { create(:simple_product, on_demand: false) }
-    let(:p7) { create(:simple_product, on_demand: false) }
+    let(:p1) { create(:product, on_demand: false) }
+    let(:p2) { create(:product, on_demand: true) }
+    let(:p3) { create(:product, on_demand: false) }
+    let(:p4) { create(:product, on_demand: false) }
+    let(:p5) { create(:product, on_demand: false) }
+    let(:p6) { create(:product, on_demand: false) }
+    let(:p7) { create(:product, on_demand: false) }
     let(:v1) { create(:variant, product: p4, unit_value: 2) }
     let(:v2) { create(:variant, product: p4, unit_value: 3, on_demand: false) }
     let(:v3) { create(:variant, product: p4, unit_value: 4, on_demand: true) }

@@ -4,7 +4,7 @@ describe Spree::Admin::ProductsController do
   describe "updating a product we do not have access to" do
     let(:s_managed) { create(:enterprise) }
     let(:s_unmanaged) { create(:enterprise) }
-    let(:p) { create(:simple_product, supplier: s_unmanaged, name: 'Peas') }
+    let(:p) { create(:product, supplier: s_unmanaged, name: 'Peas') }
 
     before do
       login_as_enterprise_user [s_managed]

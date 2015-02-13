@@ -16,7 +16,7 @@ feature %q{
     # Given a supplier with some distributed products
     s = create(:supplier_enterprise)
     d = create(:distributor_enterprise, with_payment_and_shipping: true)
-    p = create(:simple_product, supplier: s)
+    p = create(:product, supplier: s)
     oc = create(:simple_order_cycle, suppliers: [s], distributors: [d], variants: [p.master])
 
     # When I visit a supplier page

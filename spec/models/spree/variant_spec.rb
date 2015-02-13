@@ -32,8 +32,8 @@ module Spree
       describe "finding variants in a distributor" do
         let!(:d1) { create(:distributor_enterprise) }
         let!(:d2) { create(:distributor_enterprise) }
-        let!(:p1) { create(:simple_product) }
-        let!(:p2) { create(:simple_product) }
+        let!(:p1) { create(:product) }
+        let!(:p2) { create(:product) }
         let!(:oc1) { create(:simple_order_cycle, distributors: [d1], variants: [p1.master]) }
         let!(:oc2) { create(:simple_order_cycle, distributors: [d2], variants: [p2.master]) }
 
@@ -73,12 +73,12 @@ module Spree
         let(:d1) { create(:distributor_enterprise) }
         let(:d2) { create(:distributor_enterprise) }
 
-        let(:p1) { create(:simple_product) }
-        let(:p2) { create(:simple_product) }
+        let(:p1) { create(:product) }
+        let(:p2) { create(:product) }
         let(:v1) { create(:variant, product: p1) }
         let(:v2) { create(:variant, product: p2) }
 
-        let(:p_external) { create(:simple_product) }
+        let(:p_external) { create(:product) }
         let(:v_external) { create(:variant, product: p_external) }
 
         let!(:ex_in) { create(:exchange, order_cycle: oc, sender: s, receiver: oc.coordinator,
@@ -144,7 +144,7 @@ module Spree
 
 
     context "when the product has variants" do
-      let!(:product) { create(:simple_product) }
+      let!(:product) { create(:product) }
       let!(:variant) { create(:variant, product: product) }
 
       %w(weight volume).each do |unit|
@@ -202,7 +202,7 @@ module Spree
     end
 
     context "when the product does not have variants" do
-      let(:product) { create(:simple_product, variant_unit: nil) }
+      let(:product) { create(:product, variant_unit: nil) }
       let(:variant) { product.master }
 
       it "does not require unit value or unit description when the product's unit is empty" do
@@ -245,7 +245,7 @@ module Spree
 
       describe "setting the variant's weight from the unit value" do
         it "sets the variant's weight when unit is weight" do
-          p = create(:simple_product, variant_unit: nil, variant_unit_scale: nil)
+          p = create(:product, variant_unit: nil, variant_unit_scale: nil)
           v = create(:variant, product: p, weight: nil)
 
           p.update_attributes! variant_unit: 'weight', variant_unit_scale: 1
@@ -255,7 +255,7 @@ module Spree
         end
 
         it "does nothing when unit is not weight" do
-          p = create(:simple_product, variant_unit: nil, variant_unit_scale: nil)
+          p = create(:product, variant_unit: nil, variant_unit_scale: nil)
           v = create(:variant, product: p, weight: 123)
 
           p.update_attributes! variant_unit: 'volume', variant_unit_scale: 1
@@ -265,7 +265,7 @@ module Spree
         end
 
         it "does nothing when unit_value is not set" do
-          p = create(:simple_product, variant_unit: nil, variant_unit_scale: nil)
+          p = create(:product, variant_unit: nil, variant_unit_scale: nil)
           v = create(:variant, product: p, weight: 123)
 
           p.update_attributes! variant_unit: 'weight', variant_unit_scale: 1
@@ -280,7 +280,7 @@ module Spree
 
       context "when the variant initially has no value" do
         context "when the required option value does not exist" do
-          let!(:p) { create(:simple_product, variant_unit: nil, variant_unit_scale: nil) }
+          let!(:p) { create(:product, variant_unit: nil, variant_unit_scale: nil) }
           let!(:v) { create(:variant, product: p, unit_value: nil, unit_description: nil) }
 
           before do
@@ -303,10 +303,10 @@ module Spree
         end
 
         context "when the required option value already exists" do
-          let!(:p_orig) { create(:simple_product, variant_unit: 'weight', variant_unit_scale: 1) }
+          let!(:p_orig) { create(:product, variant_unit: 'weight', variant_unit_scale: 1) }
           let!(:v_orig) { create(:variant, product: p_orig, unit_value: 10, unit_description: 'foo') }
 
-          let!(:p) { create(:simple_product, variant_unit: nil, variant_unit_scale: nil) }
+          let!(:p) { create(:product, variant_unit: nil, variant_unit_scale: nil) }
           let!(:v) { create(:variant, product: p, unit_value: nil, unit_description: nil) }
 
           before do
@@ -329,10 +329,10 @@ module Spree
         end
       end
       context "when the variant already has a value set (and all required option values exist)" do
-        let!(:p0) { create(:simple_product, variant_unit: 'weight', variant_unit_scale: 1) }
+        let!(:p0) { create(:product, variant_unit: 'weight', variant_unit_scale: 1) }
         let!(:v0) { create(:variant, product: p0, unit_value: 10, unit_description: 'foo') }
 
-        let!(:p) { create(:simple_product, variant_unit: 'weight', variant_unit_scale: 1) }
+        let!(:p) { create(:product, variant_unit: 'weight', variant_unit_scale: 1) }
         let!(:v) { create(:variant, product: p, unit_value: 5, unit_description: 'bar') }
 
         it "removes the old option value and assigns the new one" do
@@ -349,10 +349,10 @@ module Spree
       end
 
       context "when the variant already has a value set (and all required option values exist)" do
-        let!(:p0) { create(:simple_product, variant_unit: 'weight', variant_unit_scale: 1) }
+        let!(:p0) { create(:product, variant_unit: 'weight', variant_unit_scale: 1) }
         let!(:v0) { create(:variant, product: p0, unit_value: 10, unit_description: 'foo') }
 
-        let!(:p) { create(:simple_product, variant_unit: 'weight', variant_unit_scale: 1) }
+        let!(:p) { create(:product, variant_unit: 'weight', variant_unit_scale: 1) }
         let!(:v) { create(:variant, product: p, unit_value: 5, unit_description: 'bar') }
 
         it "removes the old option value and assigns the new one" do
@@ -369,7 +369,7 @@ module Spree
       end
 
       context "when the variant does not have a display_as value set" do
-        let!(:p) { create(:simple_product, variant_unit: 'weight', variant_unit_scale: 1) }
+        let!(:p) { create(:product, variant_unit: 'weight', variant_unit_scale: 1) }
         let!(:v) { create(:variant, product: p, unit_value: 5, unit_description: 'bar', display_as: '') }
 
         it "requests the name of the new option_value from OptionValueName" do
@@ -381,7 +381,7 @@ module Spree
       end
 
       context "when the variant has a display_as value set" do
-        let!(:p) { create(:simple_product, variant_unit: 'weight', variant_unit_scale: 1) }
+        let!(:p) { create(:product, variant_unit: 'weight', variant_unit_scale: 1) }
         let!(:v) { create(:variant, product: p, unit_value: 5, unit_description: 'bar', display_as: 'FOOS!') }
 
         it "does not request the name of the new option_value from OptionValueName" do
@@ -395,7 +395,7 @@ module Spree
 
     describe "deleting unit option values" do
       before do
-        p = create(:simple_product, variant_unit: 'weight', variant_unit_scale: 1)
+        p = create(:product, variant_unit: 'weight', variant_unit_scale: 1)
         ot = Spree::OptionType.find_by_name 'unit_weight'
         @v = create(:variant, product: p)
       end

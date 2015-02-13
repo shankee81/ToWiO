@@ -106,8 +106,8 @@ module OpenFoodNetwork
     end
 
     describe "finding managed products" do
-      let!(:p1) { create(:simple_product) }
-      let!(:p2) { create(:simple_product) }
+      let!(:p1) { create(:product) }
+      let!(:p2) { create(:product) }
 
       before do
         permissions.stub(:managed_enterprise_products) { Spree::Product.where('1=0') }
@@ -174,7 +174,7 @@ module OpenFoodNetwork
 
     describe "finding the supplied products of related enterprises" do
       let!(:e) { create(:enterprise) }
-      let!(:p) { create(:simple_product, supplier: e) }
+      let!(:p) { create(:product, supplier: e) }
 
       it "returns supplied products" do
         permissions.should_receive(:related_enterprises_with).with(:manage_products) { [e] }
