@@ -201,6 +201,7 @@ FactoryGirl.modify do
     variant_unit 'weight'
     variant_unit_scale 1
     variant_unit_name ''
+    unit_value 1
 
     primary_taxon { Spree::Taxon.first || FactoryGirl.create(:taxon) }
   end
