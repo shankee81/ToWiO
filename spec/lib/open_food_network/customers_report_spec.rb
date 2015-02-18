@@ -44,8 +44,7 @@ module OpenFoodNetwork
         it "builds a table from a list of variants" do
           a = create(:address)
           d = create(:distributor_enterprise)
-          o = create(:order, distributor: d, bill_address: a) 
-          o.shipping_method = create(:shipping_method)
+          o = create(:order, distributor: d, bill_address: a, shipping_method: create(:shipping_method))
 
           subject.stub(:orders).and_return [o]
           subject.table.should == [[
@@ -53,7 +52,7 @@ module OpenFoodNetwork
             [a.address1, a.address2, a.city].join(" "), 
             o.email, a.phone, d.name, 
             [d.address.address1, d.address.address2, d.address.city].join(" "),
-            o.shipping_method.name
+            o.shipping_methods.first.andand.name
           ]]
         end
       end

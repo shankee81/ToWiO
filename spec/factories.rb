@@ -211,6 +211,17 @@ FactoryGirl.modify do
     unit_description ''
   end
 
+  factory :order do
+    ignore do
+      shipping_method nil
+    end
+
+    after(:create) do |order, proxy|
+      shipment = Spree::Shipment.create! order: order
+      shipment.add_shipping_method proxy.shipping_method, true
+    end
+  end
+
   factory :shipping_method do
     distributors { [Enterprise.is_distributor.first || FactoryGirl.create(:distributor_enterprise)] }
     display_on ''

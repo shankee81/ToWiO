@@ -10,6 +10,7 @@ Spree::Order.class_eval do
   belongs_to :order_cycle
   belongs_to :distributor, :class_name => 'Enterprise'
   belongs_to :cart
+  has_many :shipping_methods, through: :shipments
 
   validate :products_available_from_new_distribution, :if => lambda { distributor_id_changed? || order_cycle_id_changed? }
   attr_accessible :order_cycle_id, :distributor_id
@@ -208,6 +209,10 @@ Spree::Order.class_eval do
       logger.error("#{e.class.name}: #{e.message}")
       logger.error(e.backtrace * "\n")
     end
+  end
+
+  def shipping_method_names
+    shipping_methods.pluck :name
   end
 
 
