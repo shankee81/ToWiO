@@ -25,9 +25,6 @@ Spree::Admin::ProductsController.class_eval do
     } } }
   #respond_override :clone => { :json => {:success => lambda { redirect_to bulk_index_admin_products_url+"?q[id_eq]=#{@new.id}" } } }
 
-  def product_distributions
-  end
-
   def bulk_update
     collection_hash = Hash[params[:products].each_with_index.map { |p,i| [i,p] }]
     product_set = Spree::ProductSet.new({:collection_attributes => collection_hash})
