@@ -24,12 +24,6 @@ ActiveRecord::Schema.define(:version => 20150612045544) do
   add_index "adjustment_metadata", ["adjustment_id"], :name => "index_adjustment_metadata_on_adjustment_id"
   add_index "adjustment_metadata", ["enterprise_id"], :name => "index_adjustment_metadata_on_enterprise_id"
 
-  create_table "carts", :force => true do |t|
-    t.integer "user_id"
-  end
-
-  add_index "carts", ["user_id"], :name => "index_carts_on_user_id"
-
   create_table "cms_blocks", :force => true do |t|
     t.integer  "page_id",    :null => false
     t.string   "identifier", :null => false
@@ -636,7 +630,6 @@ ActiveRecord::Schema.define(:version => 20150612045544) do
     t.integer  "order_cycle_id"
     t.string   "currency"
     t.string   "last_ip_address"
-    t.integer  "cart_id"
     t.integer  "customer_id"
   end
 
@@ -1129,8 +1122,6 @@ ActiveRecord::Schema.define(:version => 20150612045544) do
   add_foreign_key "adjustment_metadata", "enterprises", name: "adjustment_metadata_enterprise_id_fk"
   add_foreign_key "adjustment_metadata", "spree_adjustments", name: "adjustment_metadata_adjustment_id_fk", column: "adjustment_id", dependent: :delete
 
-  add_foreign_key "carts", "spree_users", name: "carts_user_id_fk", column: "user_id"
-
   add_foreign_key "cms_blocks", "cms_pages", name: "cms_blocks_page_id_fk", column: "page_id"
 
   add_foreign_key "cms_categories", "cms_sites", name: "cms_categories_site_id_fk", column: "site_id", dependent: :delete
@@ -1221,7 +1212,6 @@ ActiveRecord::Schema.define(:version => 20150612045544) do
   add_foreign_key "spree_option_values_variants", "spree_option_values", name: "spree_option_values_variants_option_value_id_fk", column: "option_value_id"
   add_foreign_key "spree_option_values_variants", "spree_variants", name: "spree_option_values_variants_variant_id_fk", column: "variant_id"
 
-  add_foreign_key "spree_orders", "carts", name: "spree_orders_cart_id_fk"
   add_foreign_key "spree_orders", "customers", name: "spree_orders_customer_id_fk"
   add_foreign_key "spree_orders", "enterprises", name: "spree_orders_distributor_id_fk", column: "distributor_id"
   add_foreign_key "spree_orders", "order_cycles", name: "spree_orders_order_cycle_id_fk"

@@ -96,19 +96,4 @@ Spree::OrdersController.class_eval do
       end
     end
   end
-
-  def populate_cart hash
-    if spree_current_user
-      unless spree_current_user.cart
-        spree_current_user.build_cart
-        cart = Cart.create(user: spree_current_user)
-        spree_current_user.cart = cart
-        spree_current_user.save
-      end
-      distributor = Enterprise.find(hash[:distributor_id])
-      order_cycle = OrderCycle.find(hash[:order_cycle_id]) if hash[:order_cycle_id]
-      spree_current_user.cart.add_variant hash[:variants].keys.first, hash[:variants].values.first, distributor, order_cycle, current_currency
-    end
-  end
-
 end
