@@ -57,7 +57,6 @@ describe Spree::Order do
       EnterpriseFee.stub(:clear_all_adjustments_on_order)
       line_item = double(:line_item)
       subject.stub(:line_items) { [line_item] }
-      subject.stub(:provided_by_order_cycle?) { true }
 
       order_cycle = double(:order_cycle)
       OpenFoodNetwork::EnterpriseFeeCalculator.any_instance.
@@ -81,34 +80,6 @@ describe Spree::Order do
       subject.stub(:order_cycle) { order_cycle }
 
       subject.update_distribution_charge!
-    end
-
-    describe "looking up whether a line item can be provided by an order cycle" do
-      it "returns true when the variant is provided" do
-        v = double(:variant)
-        line_item = double(:line_item, variant: v)
-        order_cycle = double(:order_cycle, variants: [v])
-        subject.stub(:order_cycle) { order_cycle }
-
-        subject.send(:provided_by_order_cycle?, line_item).should be_true
-      end
-
-      it "returns false otherwise" do
-        v = double(:variant)
-        line_item = double(:line_item, variant: v)
-        order_cycle = double(:order_cycle, variants: [])
-        subject.stub(:order_cycle) { order_cycle }
-
-        subject.send(:provided_by_order_cycle?, line_item).should be_false
-      end
-
-      it "returns false when there is no order cycle" do
-        v = double(:variant)
-        line_item = double(:line_item, variant: v)
-        subject.stub(:order_cycle) { nil }
-
-        subject.send(:provided_by_order_cycle?, line_item).should be_false
-      end
     end
   end
 

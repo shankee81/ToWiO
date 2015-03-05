@@ -161,13 +161,7 @@ Spree::Order.class_eval do
       EnterpriseFee.clear_all_adjustments_on_order self
 
       line_items.each do |line_item|
-        if provided_by_order_cycle? line_item
-          OpenFoodNetwork::EnterpriseFeeCalculator.new.create_line_item_adjustments_for line_item
-
-        else
-          pd = product_distribution_for line_item
-          pd.create_adjustment_for line_item if pd
-        end
+        OpenFoodNetwork::EnterpriseFeeCalculator.new.create_line_item_adjustments_for line_item
       end
 
       if order_cycle
@@ -256,15 +250,6 @@ Spree::Order.class_eval do
         end
       end
     end
-  end
-
-  def provided_by_order_cycle?(line_item)
-    order_cycle_variants = order_cycle.andand.variants || []
-    order_cycle_variants.include? line_item.variant
-  end
-
-  def product_distribution_for(line_item)
-    line_item.variant.product.product_distribution_for self.distributor
   end
 
   def require_customer?
