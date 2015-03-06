@@ -48,16 +48,16 @@ Spree::Product.class_eval do
     where('supplier_id IN (?)', suppliers.map(&:id))
   }
 
-  # Find products that are distributed via the given distributor EITHER through a product distribution OR through an order cycle
+  # Find products that are distributed via the given distributor
   scope :in_distributor, lambda { |distributor|
     distributor = distributor.respond_to?(:id) ? distributor.id : distributor.to_i
 
-    with_order_cycles_outer.
-    where('o_exchanges.incoming = ? AND o_exchanges.receiver_id = ?', false, distributor).
+    with_order_cycles_inner.
+    where('exchanges.incoming = ? AND exchanges.receiver_id = ?', false, distributor).
     select('DISTINCT spree_products.*')
   }
 
-  # Find products that are supplied by a given enterprise or distributed via that enterprise EITHER through a product distribution OR through an order cycle
+  # Find products that are supplied by a given enterprise or distributed via that enterprise
   scope :in_supplier_or_distributor, lambda { |enterprise|
     enterprise = enterprise.respond_to?(:id) ? enterprise.id : enterprise.to_i
 
@@ -72,9 +72,8 @@ Spree::Product.class_eval do
                                                 where('order_cycles.id = ?', order_cycle) }
 
   scope :in_an_active_order_cycle, lambda { with_order_cycles_inner.
-                                                merge(OrderCycle.active).
-                                                merge(Exchange.outgoing).
-                                                where('order_cycles.id IS NOT NULL') }
+                                            merge(OrderCycle.active).
+                                            merge(Exchange.outgoing) }
 
   scope :by_producer, joins(:supplier).order('enterprises.name')
   scope :by_name, order('name')
