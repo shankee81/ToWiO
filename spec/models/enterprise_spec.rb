@@ -392,36 +392,18 @@ describe Enterprise do
     end
 
     describe "distributors_with_active_order_cycles" do
-      it "finds active distributors by order cycles" do
-        s = create(:supplier_enterprise)
-        d = create(:distributor_enterprise)
-        p = create(:product)
-        create(:simple_order_cycle, suppliers: [s], distributors: [d], variants: [p.master])
-        Enterprise.distributors_with_active_order_cycles.should == [d]
-      end
-
-      it "should not find inactive distributors by order cycles" do
-        s = create(:supplier_enterprise)
-        d = create(:distributor_enterprise)
-        p = create(:product)
-        create(:simple_order_cycle, :orders_open_at => 10.days.from_now, suppliers: [s], distributors: [d], variants: [p.master])
-        Enterprise.distributors_with_active_order_cycles.should_not include d
-      end
-    end
-
-    describe "active_distributors" do
       let!(:s) { create(:supplier_enterprise) }
       let!(:d) { create(:distributor_enterprise) }
       let!(:p) { create(:product) }
       let!(:oc) { create(:simple_order_cycle, suppliers: [s], distributors: [d], variants: [p.master]) }
 
       it "finds active distributors by order cycles" do
-        Enterprise.active_distributors.should == [d]
+        Enterprise.distributors_with_active_order_cycles.should == [d]
       end
 
       it "doesn't show distributors from inactive order cycles" do
         oc.update_attributes! orders_open_at: 1.week.from_now, orders_close_at: 2.weeks.from_now
-        Enterprise.active_distributors.should be_empty
+        Enterprise.distributors_with_active_order_cycles.should be_empty
       end
     end
 
