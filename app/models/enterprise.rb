@@ -23,8 +23,6 @@ class Enterprise < ActiveRecord::Base
   has_many :supplied_products, :class_name => 'Spree::Product', :foreign_key => 'supplier_id', :dependent => :destroy
   has_many :distributed_orders, :class_name => 'Spree::Order', :foreign_key => 'distributor_id'
   belongs_to :address, :class_name => 'Spree::Address'
-  has_many :product_distributions, :foreign_key => 'distributor_id', :dependent => :destroy
-  has_many :distributed_products, :through => :product_distributions, :source => :product
   has_many :enterprise_fees
   has_many :enterprise_roles, :dependent => :destroy
   has_many :users, through: :enterprise_roles
@@ -112,18 +110,6 @@ class Enterprise < ActiveRecord::Base
       .where('spree_products.deleted_at IS NULL AND spree_products.available_on <= ? AND spree_products.count_on_hand > 0', Time.now)
       .uniq
   }
-  scope :with_distributed_active_products_on_hand, lambda {
-    joins(:distributed_products)
-      .where('spree_products.deleted_at IS NULL AND spree_products.available_on <= ? AND spree_products.count_on_hand > 0', Time.now)
-      .uniq
-  }
-
-  scope :with_distributed_products_outer,
-    joins('LEFT OUTER JOIN product_distributions ON product_distributions.distributor_id = enterprises.id').
-    joins('LEFT OUTER JOIN spree_products ON spree_products.id = product_distributions.product_id')
-  scope :with_order_cycles_as_supplier_outer,
-    joins("LEFT OUTER JOIN exchanges ON (exchanges.sender_id = enterprises.id AND exchanges.incoming = 't')").
-    joins('LEFT OUTER JOIN order_cycles ON (order_cycles.id = exchanges.order_cycle_id)')
   scope :with_order_cycles_as_distributor_outer,
     joins("LEFT OUTER JOIN exchanges ON (exchanges.receiver_id = enterprises.id AND exchanges.incoming = 'f')").
     joins('LEFT OUTER JOIN order_cycles ON (order_cycles.id = exchanges.order_cycle_id)')
@@ -137,8 +123,8 @@ class Enterprise < ActiveRecord::Base
     joins('LEFT OUTER JOIN spree_variants ON (spree_variants.id = exchange_variants.variant_id)')
 
   scope :active_distributors, lambda {
-    with_distributed_products_outer.with_order_cycles_as_distributor_outer.
-    where('(product_distributions.product_id IS NOT NULL AND spree_products.deleted_at IS NULL AND spree_products.available_on <= ? AND spree_products.count_on_hand > 0) OR (order_cycles.id IS NOT NULL AND order_cycles.orders_open_at <= ? AND order_cycles.orders_close_at >= ?)', Time.now, Time.now, Time.now).
+    with_order_cycles_as_distributor_outer.
+    where('order_cycles.id IS NOT NULL AND order_cycles.orders_open_at <= ? AND order_cycles.orders_close_at >= ?', Time.now, Time.now).
     select('DISTINCT enterprises.*')
   }
 
@@ -149,13 +135,13 @@ class Enterprise < ActiveRecord::Base
   }
 
   scope :distributing_product, lambda { |product|
-    with_distributed_products_outer.with_order_cycles_and_exchange_variants_outer.
-    where('product_distributions.product_id = ? OR spree_variants.product_id = ?', product, product).
+    with_order_cycles_and_exchange_variants_outer.
+    where('spree_variants.product_id = ?', product).
     select('DISTINCT enterprises.*')
   }
   scope :distributing_any_product_of, lambda { |products|
-    with_distributed_products_outer.with_order_cycles_and_exchange_variants_outer.
-    where('product_distributions.product_id IN (?) OR spree_variants.product_id IN (?)', products, products).
+    with_order_cycles_and_exchange_variants_outer.
+    where('spree_variants.product_id IN (?)', products).
     select('DISTINCT enterprises.*')
   }
   scope :managed_by, lambda { |user|
@@ -245,15 +231,7 @@ class Enterprise < ActiveRecord::Base
   end
 
   def distributed_variants
-    Spree::Variant.joins(:product).merge(Spree::Product.in_distributor(self)).select('spree_variants.*')
-  end
-
-  def product_distribution_variants
-    Spree::Variant.joins(:product).merge(Spree::Product.in_product_distribution_by(self)).select('spree_variants.*')
-  end
-
-  def available_variants
-    Spree::Variant.joins(:product => :product_distributions).where('product_distributions.distributor_id=?', self.id)
+    Spree::Variant.in_distributor(self)
   end
 
   def is_distributor

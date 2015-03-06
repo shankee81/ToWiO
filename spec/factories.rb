@@ -153,12 +153,6 @@ FactoryGirl.define do
     after(:create) { |ef| ef.calculator.save! }
   end
 
-  factory :product_distribution, :class => ProductDistribution do
-    product         { |pd| Spree::Product.first || FactoryGirl.create(:product) }
-    distributor     { |pd| Enterprise.is_distributor.first || FactoryGirl.create(:distributor_enterprise) }
-    enterprise_fee  { |pd| FactoryGirl.create(:enterprise_fee, enterprise: pd.distributor) }
-  end
-
   factory :adjustment_metadata, :class => AdjustmentMetadata do
     adjustment { FactoryGirl.create(:adjustment) }
     enterprise { FactoryGirl.create(:distributor_enterprise) }

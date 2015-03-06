@@ -7,16 +7,11 @@ Spree::Product.class_eval do
   belongs_to :supplier, :class_name => 'Enterprise', touch: true
   belongs_to :primary_taxon, class_name: 'Spree::Taxon'
 
-  has_many :product_distributions, :dependent => :destroy
-  has_many :distributors, :through => :product_distributions
-
-  accepts_nested_attributes_for :product_distributions, :allow_destroy => true
   delegate_belongs_to :master, :unit_value, :unit_description
   delegate :images_attributes=, :display_as=, to: :master
 
-  attr_accessible :supplier_id, :primary_taxon_id, :distributor_ids, :product_distributions_attributes
-  attr_accessible :group_buy, :group_buy_unit_size, :unit_description, :notes, :images_attributes, :display_as
-  attr_accessible :variant_unit, :variant_unit_scale, :variant_unit_name, :unit_value
+  attr_accessible :supplier_id, :primary_taxon_id, :distributor_ids, :group_buy, :group_buy_unit_size
+  attr_accessible :variant_unit, :variant_unit_scale, :variant_unit_name, :unit_value, :unit_description, :notes, :images_attributes, :display_as
   attr_accessible :inherits_properties, :sku
 
   # validates_presence_of :variants, unless: :new_record?, message: "Product must have at least one variant"
@@ -38,8 +33,6 @@ Spree::Product.class_eval do
 
 
   # -- Joins
-  scope :with_product_distributions_outer, joins('LEFT OUTER JOIN product_distributions ON product_distributions.product_id = spree_products.id')
-
   scope :with_order_cycles_outer, joins('LEFT OUTER JOIN spree_variants AS o_spree_variants ON (o_spree_variants.product_id = spree_products.id)').
                                   joins('LEFT OUTER JOIN exchange_variants AS o_exchange_variants ON (o_exchange_variants.variant_id = o_spree_variants.id)').
                                   joins('LEFT OUTER JOIN exchanges AS o_exchanges ON (o_exchanges.id = o_exchange_variants.exchange_id)').
@@ -59,26 +52,18 @@ Spree::Product.class_eval do
   scope :in_distributor, lambda { |distributor|
     distributor = distributor.respond_to?(:id) ? distributor.id : distributor.to_i
 
-    with_product_distributions_outer.with_order_cycles_outer.
-    where('product_distributions.distributor_id = ? OR (o_exchanges.incoming = ? AND o_exchanges.receiver_id = ?)', distributor, false, distributor).
-    select('distinct spree_products.*')
-  }
-
-  scope :in_product_distribution_by, lambda { |distributor|
-    distributor = distributor.respond_to?(:id) ? distributor.id : distributor.to_i
-
-    with_product_distributions_outer.
-    where('product_distributions.distributor_id = ?', distributor).
-    select('distinct spree_products.*')
+    with_order_cycles_outer.
+    where('o_exchanges.incoming = ? AND o_exchanges.receiver_id = ?', false, distributor).
+    select('DISTINCT spree_products.*')
   }
 
   # Find products that are supplied by a given enterprise or distributed via that enterprise EITHER through a product distribution OR through an order cycle
   scope :in_supplier_or_distributor, lambda { |enterprise|
     enterprise = enterprise.respond_to?(:id) ? enterprise.id : enterprise.to_i
 
-    with_product_distributions_outer.with_order_cycles_outer.
-    where('spree_products.supplier_id = ? OR product_distributions.distributor_id = ? OR (o_exchanges.incoming = ? AND o_exchanges.receiver_id = ?)', enterprise, enterprise, false, enterprise).
-    select('distinct spree_products.*')
+    with_order_cycles_outer.
+    where('spree_products.supplier_id = ? OR (o_exchanges.incoming = ? AND o_exchanges.receiver_id = ?)', enterprise, false, enterprise).
+    select('DISTINCT spree_products.*')
   }
 
   # Find products that are distributed by the given order cycle
@@ -136,10 +121,6 @@ Spree::Product.class_eval do
     self.class.in_order_cycle(order_cycle).include? self
   end
 
-  def product_distribution_for(distributor)
-    self.product_distributions.find_by_distributor_id(distributor)
-  end
-
   # overriding to check self.on_demand as well
   def has_stock?
     has_variants? ? variants.any?(&:in_stock?) : (on_demand || master.in_stock?)
@@ -154,15 +135,6 @@ Spree::Product.class_eval do
 
   def variants_distributed_by(order_cycle, distributor)
     order_cycle.variants_distributed_by(distributor).where(product_id: self)
-  end
-
-  # Build a product distribution for each distributor
-  def build_product_distributions_for_user user
-    Enterprise.is_distributor.managed_by(user).each do |distributor|
-      unless self.product_distributions.find_by_distributor_id distributor.id
-        self.product_distributions.build(:distributor => distributor)
-      end
-    end
   end
 
   def variant_unit_option_type

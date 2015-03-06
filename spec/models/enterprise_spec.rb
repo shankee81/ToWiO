@@ -410,75 +410,18 @@ describe Enterprise do
     end
 
     describe "active_distributors" do
-      it "finds active distributors by product distributions" do
-        d = create(:distributor_enterprise)
-        create(:product, :distributors => [d])
-        Enterprise.active_distributors.should == [d]
-      end
-
-      it "doesn't show distributors of deleted products" do
-        d = create(:distributor_enterprise)
-        create(:product, :distributors => [d], :deleted_at => Time.now)
-        Enterprise.active_distributors.should be_empty
-      end
-
-      it "doesn't show distributors of unavailable products" do
-        d = create(:distributor_enterprise)
-        create(:product, :distributors => [d], :available_on => 1.week.from_now)
-        Enterprise.active_distributors.should be_empty
-      end
-
-      it "doesn't show distributors of out of stock products" do
-        d = create(:distributor_enterprise)
-        create(:product, :distributors => [d], :on_hand => 0)
-        Enterprise.active_distributors.should be_empty
-      end
+      let!(:s) { create(:supplier_enterprise) }
+      let!(:d) { create(:distributor_enterprise) }
+      let!(:p) { create(:product) }
+      let!(:oc) { create(:simple_order_cycle, suppliers: [s], distributors: [d], variants: [p.master]) }
 
       it "finds active distributors by order cycles" do
-        s = create(:supplier_enterprise)
-        d = create(:distributor_enterprise)
-        p = create(:product)
-        create(:simple_order_cycle, suppliers: [s], distributors: [d], variants: [p.master])
         Enterprise.active_distributors.should == [d]
       end
 
       it "doesn't show distributors from inactive order cycles" do
-        s = create(:supplier_enterprise)
-        d = create(:distributor_enterprise)
-        p = create(:product)
-        create(:simple_order_cycle, suppliers: [s], distributors: [d], variants: [p.master], orders_open_at: 1.week.from_now, orders_close_at: 2.weeks.from_now)
+        oc.update_attributes! orders_open_at: 1.week.from_now, orders_close_at: 2.weeks.from_now
         Enterprise.active_distributors.should be_empty
-      end
-    end
-
-    describe "with_distributed_active_products_on_hand" do
-      it "returns distributors with products in stock" do
-        d1 = create(:distributor_enterprise)
-        d2 = create(:distributor_enterprise)
-        d3 = create(:distributor_enterprise)
-        d4 = create(:distributor_enterprise)
-        create(:product, :distributors => [d1, d2], :on_hand => 5)
-        create(:product, :distributors => [d1], :on_hand => 5)
-        create(:product, :distributors => [d3], :on_hand => 0)
-
-        Enterprise.with_distributed_active_products_on_hand.should match_array [d1, d2]
-      end
-
-      it "returns distributors with available products in stock" do
-        d1 = create(:distributor_enterprise) # two products on hand
-        d2 = create(:distributor_enterprise) # one product on hand
-        d3 = create(:distributor_enterprise) # product on hand but not yet available
-        d4 = create(:distributor_enterprise) # no products on hand
-        d5 = create(:distributor_enterprise) # deleted product
-        d6 = create(:distributor_enterprise) # no products
-        create(:product, :distributors => [d1, d2], :on_hand => 5)
-        create(:product, :distributors => [d1], :on_hand => 5)
-        create(:product, :distributors => [d3], :on_hand => 5, :available_on => 1.week.from_now)
-        create(:product, :distributors => [d4], :on_hand => 0)
-        create(:product, :distributors => [d5]).delete
-
-        Enterprise.with_distributed_active_products_on_hand.should match_array [d1, d2]
-        Enterprise.with_distributed_active_products_on_hand.distinct_count.should == 2
       end
     end
 
@@ -537,12 +480,6 @@ describe Enterprise do
     end
 
     describe "distributing_product" do
-      it "returns enterprises distributing via a product distribution" do
-        d = create(:distributor_enterprise)
-        p = create(:product, distributors: [d])
-        Enterprise.distributing_product(p).should == [d]
-      end
-
       it "returns enterprises distributing via an order cycle" do
         d = create(:distributor_enterprise)
         p = create(:product)
@@ -552,23 +489,17 @@ describe Enterprise do
     end
 
     describe "distributing_any_product_of" do
-      it "returns enterprises distributing via a product distribution" do
-        d = create(:distributor_enterprise)
-        p = create(:product, distributors: [d])
-        Enterprise.distributing_any_product_of([p]).should == [d]
-      end
+      let(:d) { create(:distributor_enterprise) }
+      let(:p1) { create(:product) }
+      let(:p2) { create(:product) }
 
       it "returns enterprises distributing via an order cycle" do
-        d = create(:distributor_enterprise)
-        p = create(:product)
-        oc = create(:simple_order_cycle, distributors: [d], variants: [p.master])
-        Enterprise.distributing_any_product_of([p]).should == [d]
+        oc = create(:simple_order_cycle, distributors: [d], variants: [p1.master])
+        Enterprise.distributing_any_product_of([p1]).should == [d]
       end
 
       it "does not return duplicate enterprises" do
-        d = create(:distributor_enterprise)
-        p1 = create(:product, distributors: [d])
-        p2 = create(:product, distributors: [d])
+        oc = create(:simple_order_cycle, distributors: [d], variants: [p1.master, p2.master])
         Enterprise.distributing_any_product_of([p1, p2]).should == [d]
       end
     end
@@ -703,22 +634,12 @@ describe Enterprise do
   end
 
   describe "finding variants distributed by the enterprise" do
-    it "finds master and other variants" do
-      d = create(:distributor_enterprise)
-      p = create(:product, distributors: [d])
-      v = p.variants.first
-      d.distributed_variants.should match_array [p.master, v]
-    end
+    let!(:d) { create(:distributor_enterprise) }
+    let!(:p) { create(:product) }
+    let!(:oc) { create(:simple_order_cycle, distributors: [d], variants: [p.variants.first]) }
 
-    pending "finds variants distributed by order cycle" do
-      # there isn't actually a method for this on Enterprise?
-      d = create(:distributor_enterprise)
-      p = create(:product)
-      v = p.variants.first
-      oc = create(:simple_order_cycle, distributors: [d], variants: [v])
-
-      # This method doesn't do what this test says it does...
-      d.distributed_variants.should match_array [v]
+    it "finds variants distributed by order cycle" do
+      d.distributed_variants.should == [p.variants.first]
     end
   end
 
