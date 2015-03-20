@@ -52,8 +52,8 @@ Spree::Product.class_eval do
   scope :in_distributor, lambda { |distributor|
     distributor = distributor.respond_to?(:id) ? distributor.id : distributor.to_i
 
-    with_order_cycles_inner.
-    where('exchanges.incoming = ? AND exchanges.receiver_id = ?', false, distributor).
+    with_order_cycles_outer.
+    where('o_exchanges.incoming = ? AND o_exchanges.receiver_id = ?', false, distributor).
     select('DISTINCT spree_products.*')
   }
 
