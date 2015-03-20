@@ -168,11 +168,11 @@ FactoryGirl.define do
 
   factory :order_with_totals_and_distribution, :parent => :order do #possibly called :order_with_line_items in newer Spree
     distributor { create(:distributor_enterprise) }
-    order_cycle { create(:simple_order_cycle) }
+    order_cycle { create(:simple_order_cycle, distributors: [distributor]) }
 
     after(:create) do |order|
-      p = create(:simple_product, :distributors => [order.distributor])
-      FactoryGirl.create(:line_item, :order => order, :product => p)
+      p = create(:simple_product)
+      FactoryGirl.create(:line_item, order: order, product: p)
       order.reload
     end
   end
