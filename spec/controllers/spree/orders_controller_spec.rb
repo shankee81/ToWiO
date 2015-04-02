@@ -45,10 +45,11 @@ describe Spree::OrdersController do
   context "adding a group buy product to the cart" do
     it "sets a variant attribute for the max quantity" do
       distributor_product = create(:distributor_enterprise)
-      p = create(:product, :distributors => [distributor_product], :group_buy => true)
+      p = create(:product, :group_buy => true)
+      order_cycle = create(:simple_order_cycle, distributors: [distributor_product], variants: [p.master])
 
       order = subject.current_order(true)
-      order.stub(:distributor) { distributor_product }
+      order.set_distribution! distributor_product, order_cycle
       order.should_receive(:set_variant_attributes).with(p.master, {'max_quantity' => '3'})
       controller.stub(:current_order).and_return(order)
 
@@ -80,9 +81,17 @@ describe Spree::OrdersController do
 
   context "removing line items from cart" do
     describe "when I pass params that includes a line item no longer in our cart" do
+      let(:distributor) { create(:distributor_enterprise) }
+      let(:order_cycle) { create(:simple_order_cycle, distributors: [distributor], variants: [product.master]) }
+      let(:order) { subject.current_order(true) }
+      let(:product) { create(:simple_product, on_hand: 110) }
+
+      before do
+        order.set_distribution! distributor, order_cycle
+      end
+
       it "should silently ignore the missing line item" do
-        order = subject.current_order(true)
-        li = order.add_variant(create(:simple_product, on_hand: 110).master)
+        li = order.add_variant(product.master)
         spree_get :update, order: { line_items_attributes: {
           "0" => {quantity: "0", id: "9999"},
           "1" => {quantity: "99", id: li.id}
