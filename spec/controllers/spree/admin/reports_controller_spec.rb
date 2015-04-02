@@ -13,9 +13,9 @@ describe Spree::Admin::ReportsController do
   let(:d1) { create(:distributor_enterprise) }
   let(:d2) { create(:distributor_enterprise) }
   let(:d3) { create(:distributor_enterprise) }
-  let(:p1) { create(:product, price: 12.34, distributors: [d1], supplier: s1) }
-  let(:p2) { create(:product, price: 23.45, distributors: [d2], supplier: s2) }
-  let(:p3) { create(:product, price: 34.56, distributors: [d3], supplier: s3) }
+  let(:p1) { create(:product, price: 12.34, supplier: s1) }
+  let(:p2) { create(:product, price: 23.45, supplier: s2) }
+  let(:p3) { create(:product, price: 34.56, supplier: s3) }
 
   # Given two order cycles with both distributors
   let(:ocA) { create(:simple_order_cycle, coordinator: c1, distributors: [d1, d2], suppliers: [s1, s2, s3], variants: [p1.master, p3.master]) }
@@ -170,7 +170,7 @@ describe Spree::Admin::ReportsController do
 
     it "should build distributors for the current user" do
       spree_get :products_and_inventory
-      assigns(:distributors).should match_array [c1, c2, d1, d2, d3]
+      assigns(:distributors).should match_array [c1, c2, d1, d2]
     end
 
     it "builds suppliers for the current user" do
@@ -211,7 +211,7 @@ describe Spree::Admin::ReportsController do
 
     it "should build distributors for the current user" do
       spree_get :customers
-      assigns(:distributors).should match_array [c1, c2, d1, d2, d3]
+      assigns(:distributors).should match_array [c1, c2, d1, d2]
     end
 
     it "builds suppliers for the current user" do

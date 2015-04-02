@@ -129,6 +129,16 @@ class Enterprise < ActiveRecord::Base
     select('DISTINCT enterprises.*')
   }
 
+  scope :with_distributed_products_outer,
+    joins("LEFT OUTER JOIN exchanges ON (exchanges.receiver_id = enterprises.id AND exchanges.incoming = 'f')").
+    joins('LEFT OUTER JOIN order_cycles ON (order_cycles.id = exchanges.order_cycle_id)').
+    merge(OrderCycle.active).
+    joins('LEFT OUTER JOIN exchange_variants ON (exchange_variants.exchange_id = exchanges.id)').
+    joins('LEFT OUTER JOIN spree_variants    ON (spree_variants.id = exchange_variants.variant_id)').
+    joins('LEFT OUTER JOIN spree_products    ON (spree_products.id = spree_variants.product_id)')
+
+
+
   scope :distributing_product, lambda { |product|
     with_order_cycles_and_exchange_variants.
     where('spree_variants.product_id = ?', product).
