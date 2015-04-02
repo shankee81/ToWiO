@@ -125,8 +125,8 @@ module Spree
       let(:d1) { create(:distributor_enterprise) }
       let(:d2) { create(:distributor_enterprise) }
 
-      let(:p1) { create(:product, supplier: s1, distributors:[d1, d2]) }
-      let(:p2) { create(:product, supplier: s2, distributors:[d1, d2]) }
+      let(:p1) { create(:product, supplier: s1) }
+      let(:p2) { create(:product, supplier: s2) }
       let(:p_related) { create(:product, supplier: s_related) }
 
       let(:er1) { create(:enterprise_relationship, parent: s1, child: d1) }
