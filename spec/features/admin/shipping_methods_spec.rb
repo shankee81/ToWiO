@@ -48,17 +48,6 @@ feature 'shipping methods' do
       page.should have_content "Shipping method \"#{@sm.name}\" has been successfully removed!"
       Spree::ShippingMethod.where(:id => @sm.id).should be_empty
     end
-
-    scenario "deleting a shipping method referenced by an order" do
-      o = create(:order)
-      o.shipping_method = @sm
-      o.save!
-
-      visit_delete spree.admin_shipping_method_path(@sm)
-
-      page.should have_content "That shipping method cannot be deleted as it is referenced by an order: #{o.number}."
-      Spree::ShippingMethod.find(@sm.id).should_not be_nil
-    end
   end
 
   context "as an enterprise user", js: true do
