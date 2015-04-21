@@ -27,10 +27,11 @@ feature 'Shops', js: true do
   end
 
   it "should grey out hubs that are not in an order cycle" do
-    create(:simple_product, distributors: [d1, d2])
+    d1
+    d2
     visit shops_path
-    page.should have_selector 'hub.inactive'
-    page.should have_selector 'hub.inactive',   text: d2.name
+    page.should have_selector 'hub.inactive', text: d1.name
+    page.should have_selector 'hub.inactive', text: d2.name
   end
 
   it "should link to the hub page" do
