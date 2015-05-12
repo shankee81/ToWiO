@@ -8,12 +8,12 @@ module Api
     respond_to :json
 
     def managed
-      @enterprises = Enterprise.ransack(params[:q]).result.managed_by(current_api_user)
+      @enterprises = Enterprise.ransack(params[:q]).result.managed_by(current_api_user).order(:name)
       render params[:template] || :bulk_index
     end
 
     def accessible
-      @enterprises = Enterprise.ransack(params[:q]).result.accessible_by(current_api_user)
+      @enterprises = Enterprise.ransack(params[:q]).result.accessible_by(current_api_user).order(:name)
       render params[:template] || :bulk_index
     end
 
