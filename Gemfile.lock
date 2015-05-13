@@ -150,7 +150,7 @@ GEM
       sprockets
       tilt
     angularjs-file-upload-rails (1.1.0)
-    angularjs-rails (1.2.13)
+    angularjs-rails (1.2.26)
     ansi (1.4.2)
     arel (3.0.3)
     awesome_nested_set (2.1.5)
@@ -535,7 +535,7 @@ DEPENDENCIES
   andand
   angular-rails-templates
   angularjs-file-upload-rails (~> 1.1.0)
-  angularjs-rails (= 1.2.13)
+  angularjs-rails (= 1.2.26)
   awesome_print
   aws-sdk
   bugsnag
