@@ -549,6 +549,7 @@ ActiveRecord::Schema.define(:version => 20150526075942) do
     t.string   "currency"
     t.decimal  "distribution_fee",     :precision => 10, :scale => 2
     t.string   "shipping_method_name"
+    t.decimal  "unit_value",           :precision => 8,  :scale => 2
   end
 
   add_index "spree_line_items", ["order_id"], :name => "index_line_items_on_order_id"
@@ -618,9 +619,9 @@ ActiveRecord::Schema.define(:version => 20150526075942) do
     t.string   "email"
     t.text     "special_instructions"
     t.integer  "distributor_id"
+    t.integer  "order_cycle_id"
     t.string   "currency"
     t.string   "last_ip_address"
-    t.integer  "order_cycle_id"
     t.integer  "cart_id"
   end
 
