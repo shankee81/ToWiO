@@ -2,13 +2,22 @@ require 'open_food_network/scope_variant_to_hub'
 require 'open_food_network/enterprise_fee_calculator'
 require 'open_food_network/option_value_namer'
 
+# There must be a better way to do this
+module Spree::Api::ApiHelpers
+    def variant_attributes
+        [:id, :name, :count_on_hand, :sku, :price, :weight, :height, :width, :depth, :is_master, :cost_price, :permalink, :product_id, :lock_version, :updated_at]
+    end
+end
+
 Spree::Variant.class_eval do
   include OpenFoodNetwork::VariantScopableToHub
 
   has_many :exchange_variants, dependent: :destroy
   has_many :exchanges, through: :exchange_variants
 
-  attr_accessible :unit_value, :unit_description, :images_attributes, :display_as, :display_name
+  attr_accessible :unit_value, :unit_description, :images_attributes,
+      :display_as, :display_name, :count_on_hand, :on_demand, :updated_at
+
   accepts_nested_attributes_for :images
 
   validates_presence_of :unit_value,

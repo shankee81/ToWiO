@@ -1,5 +1,28 @@
 require 'open_food_network/scope_product_to_hub'
 
+# There must be a better way to do this, I wanted to
+# add updated_at to the list, that's all.
+module Spree::Api::ApiHelpers
+    def product_attributes
+        [
+            :id,
+            :name,
+            :description,
+            :cost_price,
+            :price,
+            :available_on,
+            :permalink,
+            :on_demand,
+            :primary_taxon_id,
+            :count_on_hand,
+            :meta_description,
+            :meta_keywords,
+            :taxon_ids,
+            :updated_at
+        ]
+    end
+end
+
 Spree::Product.class_eval do
   include OpenFoodNetwork::ProductScopableToHub
 
@@ -181,7 +204,6 @@ Spree::Product.class_eval do
     end
   end
   alias_method_chain :delete, :delete_from_order_cycles
-
 
   private
 
