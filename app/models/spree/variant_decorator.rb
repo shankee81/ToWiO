@@ -5,7 +5,10 @@ require 'open_food_network/option_value_namer'
 # There must be a better way to do this
 module Spree::Api::ApiHelpers
     def variant_attributes
-        [:id, :name, :count_on_hand, :sku, :price, :weight, :height, :width, :depth, :is_master, :cost_price, :permalink, :product_id, :lock_version, :updated_at]
+        [
+            :id, :name, :count_on_hand, :sku, :price, :weight, :height, :width, :depth, :is_master, :cost_price,
+            :permalink, :product_id, :lock_version, :updated_at, :unit_value, :unit_description, :on_demand
+        ]
     end
 end
 
