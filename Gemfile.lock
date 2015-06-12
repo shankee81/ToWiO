@@ -386,6 +386,7 @@ GEM
       rspec (>= 2.14.0, < 3.1.0)
       ruby-progressbar (~> 1.4)
     geocoder (1.1.8)
+    get_process_mem (0.2.0)
     gmaps4rails (1.5.6)
     guard (2.2.4)
       formatador (>= 0.2.4)
@@ -612,6 +613,9 @@ GEM
     unicorn-rails (1.1.0)
       rack
       unicorn
+    unicorn-worker-killer (0.4.3)
+      get_process_mem (~> 0)
+      unicorn (~> 4)
     uuidtools (2.1.5)
     versioncake (0.4.0)
       actionpack (>= 3.0)
@@ -722,6 +726,7 @@ DEPENDENCIES
   uglifier (>= 1.0.3)
   unicorn
   unicorn-rails
+  unicorn-worker-killer
   webmock
   whenever
   wicked_pdf
