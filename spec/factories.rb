@@ -177,8 +177,9 @@ FactoryGirl.define do
     end
   end
 
-  factory :order_with_distributor, :parent => :order do
+  factory :order_with_distribution, :parent => :order do
     distributor { create(:distributor_enterprise) }
+    order_cycle { create(:simple_order_cycle) }
   end
 
   factory :zone_with_member, :parent => :zone do
