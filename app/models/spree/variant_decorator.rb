@@ -60,7 +60,7 @@ Spree::Variant.class_eval do
   }
 
   def supplier_id
-      supplier.id
+      product.supplier.id
   end
 
   def price_with_fees(distributor, order_cycle)
