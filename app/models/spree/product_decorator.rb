@@ -1,7 +1,7 @@
 require 'open_food_network/scope_product_to_hub'
 
 # There must be a better way to do this, I wanted to
-# add updated_at to the list, that's all.
+# add updated_at and supplier_id to the list, that's all.
 module Spree::Api::ApiHelpers
     def product_attributes
         [
@@ -18,7 +18,8 @@ module Spree::Api::ApiHelpers
             :meta_description,
             :meta_keywords,
             :taxon_ids,
-            :updated_at
+            :updated_at,
+            :supplier_id
         ]
     end
 end
