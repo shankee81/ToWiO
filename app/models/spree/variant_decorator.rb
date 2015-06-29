@@ -7,7 +7,8 @@ module Spree::Api::ApiHelpers
     def variant_attributes
         [
             :id, :name, :count_on_hand, :sku, :price, :weight, :height, :width, :depth, :is_master, :cost_price,
-            :permalink, :product_id, :lock_version, :updated_at, :unit_value, :unit_description, :on_demand
+            :permalink, :product_id, :lock_version, :updated_at, :unit_value, :unit_description, :on_demand,
+            :supplier_id
         ]
     end
 end
@@ -58,6 +59,9 @@ Spree::Variant.class_eval do
     where('spree_variants.id IN (?)', order_cycle.variants_distributed_by(distributor))
   }
 
+  def supplier_id
+      supplier.id
+  end
 
   def price_with_fees(distributor, order_cycle)
     price + fees_for(distributor, order_cycle)
