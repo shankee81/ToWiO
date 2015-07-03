@@ -1,6 +1,10 @@
 Openfoodnetwork::Application.routes.draw do
   root :to => 'home#index'
 
+  # Redirects from old URLs avoid server errors and helps search engines
+  get "/enterprises", to: redirect("/")
+  get "/products", to: redirect("/")
+  get "/t/products/:id", to: redirect("/")
 
   get "/#/login", to: "home#index", as: :spree_login
   get "/login", to: redirect("/#/login")
@@ -16,8 +20,23 @@ Openfoodnetwork::Application.routes.draw do
     get :order_cycle
   end
 
-  resources :groups
-  resources :producers
+  resources :producers, only: [:index] do
+    collection do
+      get :signup
+    end
+  end
+
+  resources :shops, only: [:index] do
+    collection do
+      get :signup
+    end
+  end
+
+  resources :groups, only: [:index, :show] do
+    collection do
+      get :signup
+    end
+  end
 
   get '/checkout', :to => 'checkout#edit' , :as => :checkout
   put '/checkout', :to => 'checkout#update' , :as => :update_checkout
@@ -57,7 +76,8 @@ Openfoodnetwork::Application.routes.draw do
       end
 
       member do
-        put :set_sells
+        get :welcome
+        put :register
       end
 
       resources :producer_properties do
@@ -85,6 +105,8 @@ Openfoodnetwork::Application.routes.draw do
     end
 
     resources :customers, only: [:index, :update]
+
+    resource :content
   end
 
   namespace :api do

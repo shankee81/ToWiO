@@ -1,10 +1,7 @@
-require 'open_food_network/scope_variant_to_hub'
 require 'open_food_network/enterprise_fee_calculator'
 require 'open_food_network/option_value_namer'
 
 Spree::Variant.class_eval do
-  include OpenFoodNetwork::VariantScopableToHub
-
   has_many :exchange_variants, dependent: :destroy
   has_many :exchanges, through: :exchange_variants
   has_many :variant_overrides
@@ -44,6 +41,13 @@ Spree::Variant.class_eval do
   scope :for_distribution, lambda { |order_cycle, distributor|
     where('spree_variants.id IN (?)', order_cycle.variants_distributed_by(distributor))
   }
+
+
+  def self.indexed
+    Hash[
+      scoped.map { |v| [v.id, v] }
+    ]
+  end
 
 
   def price_with_fees(distributor, order_cycle)

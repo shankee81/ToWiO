@@ -33,7 +33,7 @@ require 'capybara/poltergeist'
 Capybara.javascript_driver = :poltergeist
 
 Capybara.register_driver :poltergeist do |app|
-  options = {phantomjs_options: ['--load-images=no'], window_size: [1280, 800], timeout: 1.minute}
+  options = {phantomjs_options: ['--load-images=no'], window_size: [1280, 800], timeout: 2.minutes}
   # Extend poltergeist's timeout to allow ample time to use pry in browser thread
   #options.merge! {timeout: 5.minutes}
   # Enable the remote inspector: Use page.driver.debug to open a remote debugger in chrome
@@ -80,6 +80,9 @@ RSpec.configure do |config|
   # Geocoding
   config.before(:each) { Spree::Address.any_instance.stub(:geocode).and_return([1,1]) }
 
+  # Ensure we start with consistent config settings
+  config.before(:each) { Spree::Config.products_require_tax_category = false }
+
   # Helpers
   config.include Rails.application.routes.url_helpers
   config.include Spree::UrlHelpers
@@ -91,6 +94,7 @@ RSpec.configure do |config|
   config.include OpenFoodNetwork::ControllerHelper, :type => :controller
   config.include OpenFoodNetwork::FeatureToggleHelper
   config.include OpenFoodNetwork::EnterpriseGroupsHelper
+  config.include OpenFoodNetwork::ProductsHelper
   config.include OpenFoodNetwork::DistributionHelper
   config.include OpenFoodNetwork::HtmlHelper
   config.include ActionView::Helpers::DateHelper
