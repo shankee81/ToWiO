@@ -8,7 +8,7 @@ module Spree::Api::ApiHelpers
         [
             :id, :name, :count_on_hand, :sku, :price, :weight, :height, :width, :depth, :is_master, :cost_price,
             :permalink, :product_id, :lock_version, :updated_at, :unit_value, :unit_description, :on_demand,
-            :supplier_id, :full_name
+            :supplier_id, :deleted_at, :full_name
         ]
     end
 end
