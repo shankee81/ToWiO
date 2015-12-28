@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20151128185900) do
+ActiveRecord::Schema.define(:version => 20151222154009) do
 
   create_table "account_invoices", :force => true do |t|
     t.integer  "user_id",    :null => false
@@ -982,6 +982,15 @@ ActiveRecord::Schema.define(:version => 20151128185900) do
     t.string  "name"
     t.string  "abbr"
     t.integer "country_id"
+  end
+
+  create_table "spree_store_credits", :force => true do |t|
+    t.integer  "user_id"
+    t.decimal  "amount",           :precision => 8, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "remaining_amount", :precision => 8, :scale => 2, :default => 0.0, :null => false
+    t.string   "reason"
+    t.datetime "created_at",                                                      :null => false
+    t.datetime "updated_at",                                                      :null => false
   end
 
   create_table "spree_tax_categories", :force => true do |t|

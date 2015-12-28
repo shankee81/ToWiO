@@ -79,3 +79,5 @@ angular.module("ofn.admin").controller "AdminVariantOverridesCtrl", ($scope, $ti
       .success (updatedVos) ->
         VariantOverrides.updateData updatedVos
         $timeout -> StatusMessage.display 'success', 'Stocks reset to defaults.'
+      .error (data, status) ->
+        $timeout -> StatusMessage.display 'failure', $scope.updateError(data, status)
