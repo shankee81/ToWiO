@@ -106,7 +106,7 @@ FactoryGirl.define do
     long_description '<p>Hello, world!</p><p>This is a paragraph.</p>'
     email 'enterprise@example.com'
     address { FactoryGirl.create(:address) }
-    confirmed_at { Time.now }
+    confirmed_at { Time.zone.now }
   end
 
   factory :supplier_enterprise, :parent => :enterprise do
@@ -221,8 +221,8 @@ FactoryGirl.define do
   end
 
   factory :billable_period do
-    begins_at { Time.now.beginning_of_month }
-    ends_at { Time.now.beginning_of_month + 1.month }
+    begins_at { Time.zone.now.beginning_of_month }
+    ends_at { Time.zone.now.beginning_of_month + 1.month }
     sells { 'any' }
     trial { false }
     enterprise
