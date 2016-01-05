@@ -178,6 +178,9 @@ class AbilityDecorator
       end
     end
 
+    # Looking up customers when creating an order
+    can [:users], :search
+
     can [:create], OrderCycle
 
     can [:admin, :index, :read, :create, :edit, :update], ExchangeVariant
