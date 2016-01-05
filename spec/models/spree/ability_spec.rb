@@ -367,6 +367,10 @@ module Spree
           should have_ability([:admin, :create], for: Spree::LineItem)
         end
 
+        it "should be able to search customers for an order" do
+          should have_ability(:users, for: :search)
+        end
+
         it "should be able to read/write Payments on a product" do
           should have_ability([:admin, :index, :read, :create, :edit, :update, :fire], for: Spree::Payment)
         end
