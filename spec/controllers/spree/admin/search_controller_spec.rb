@@ -26,7 +26,22 @@ describe Spree::Admin::SearchController do
       end
 
       describe "when I specify a shop" do
-        it "limits users to those who have ordered through that shop"
+        let(:enterprise2) { create(:enterprise) }
+
+        it "limits users to those who have ordered through that shop" do
+          spree_get :users, q: "customer", distributor_id: enterprise.id.to_s
+          expect(assigns(:users)).to include customer
+        end
+
+        it "does not return customers who have not ordered through that shop" do
+          spree_get :users, q: "customer", distributor_id: enterprise2.id.to_s
+          expect(assigns(:users)).to_not include customer
+        end
+
+        it "performs no limitation when I specify a blank value for the shop" do
+          spree_get :users, q: "customer", distributor_id: ''
+          expect(assigns(:users)).to include customer
+        end
       end
     end
 

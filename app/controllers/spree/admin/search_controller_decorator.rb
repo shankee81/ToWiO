@@ -22,7 +22,9 @@ Spree::Admin::SearchController.class_eval do
     users_without_permissions
 
     shop_ids = Enterprise.is_distributor.managed_by(spree_current_user).pluck :id
-    user_ids = Spree::Order.where(distributor_id: shop_ids).pluck :user_id
+    shop_ids &= [params[:distributor_id].to_i] if params[:distributor_id].present?
+
+    user_ids = Spree::Order.where(distributor_id: shop_ids).pluck(:user_id).uniq
 
     @users = @users.where id: user_ids
 
