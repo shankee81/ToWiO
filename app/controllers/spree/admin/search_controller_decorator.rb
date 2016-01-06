@@ -17,9 +17,16 @@ Spree::Admin::SearchController.class_eval do
   end
 
 
-  def users_with_ams
-    users_without_ams
+  # Limit users to those who've shopped with one of our enterprises
+  def users_with_permissions
+    users_without_permissions
+
+    shop_ids = Enterprise.is_distributor.managed_by(spree_current_user).pluck :id
+    user_ids = Spree::Order.where(distributor_id: shop_ids).pluck :user_id
+
+    @users = @users.where id: user_ids
+
     render json: @users, each_serializer: Api::Admin::UserSerializer
   end
-  alias_method_chain :users, :ams
+  alias_method_chain :users, :permissions
 end
