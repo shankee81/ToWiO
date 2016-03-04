@@ -46,6 +46,15 @@ module Spree
       it "is available to orders that match its distributor" do
         o = create(:order, ship_address: create(:address),
                   distributor: sm.distributors.first, currency: Spree::Config.currency)
+
+        puts sm.available?(o)
+        puts sm.within_zone?(o)
+        puts sm.category_match?(o)
+        puts sm.currency_match?(o)
+        puts sm.calculator.preferences[:currency]
+        puts o.currency
+        puts Spree::Config.currency
+
         sm.should be_available_to_order o
       end
 
@@ -58,6 +67,15 @@ module Spree
       it "is available to orders with no shipping address" do
         o = create(:order, ship_address: nil,
                   distributor: sm.distributors.first, currency: Spree::Config.currency)
+
+        puts sm.available?(o)
+        puts sm.within_zone?(o)
+        puts sm.category_match?(o)
+        puts sm.currency_match?(o)
+        puts sm.calculator.preferences[:currency]
+        puts o.currency
+        puts Spree::Config.currency
+
         sm.should be_available_to_order o
       end
     end
