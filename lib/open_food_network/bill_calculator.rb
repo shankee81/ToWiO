@@ -8,7 +8,7 @@ module OpenFoodNetwork
       @rate = opts[:rate] || Spree::Config[:account_invoices_monthly_rate]
       @cap = opts[:cap] || Spree::Config[:account_invoices_monthly_cap]
       @tax_rate = opts[:tax_rate] || Spree::Config[:account_invoices_tax_rate]
-      @min_bill_to = opts[:minimum_billable_turnover] || Spree::Config[:minimum_billable_turnover]
+      @min_bill_to = opts[:min_bill_to] || Spree::Config[:minimum_billable_turnover]
     end
 
     def bill
