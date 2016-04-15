@@ -25,5 +25,4 @@ Spree::AppConfiguration.class_eval do
 
   # Monitoring
   preference :last_job_queue_heartbeat_at, :string, default: nil
-
 end
