@@ -8,6 +8,9 @@ module Spree
       alias_method_chain :match, :sales_tax_registration
     end
 
+    after_save :refresh_products_cache
+    after_destroy :refresh_products_cache
+
 
     def adjust_with_included_tax(order)
       adjust_without_included_tax(order)
@@ -56,6 +59,11 @@ module Spree
       calculator.calculable.included_in_price = old_included_in_price
 
       result
+    end
+
+
+    def refresh_products_cache
+      OpenFoodNetwork::ProductsCache.tax_rate_changed self
     end
   end
 end

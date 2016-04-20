@@ -405,6 +405,26 @@ module OpenFoodNetwork
       end
     end
 
+    describe "when a tax rate is changed" do
+      let(:zone) { create(:zone_with_member) }
+      let(:product_taxed) { create(:taxed_product, zone: zone, price: 110.00, tax_rate_amount: 0.1) }
+      let(:product_untaxed) { create(:simple_product) }
+      let(:d) { create(:distributor_enterprise) }
+      let(:oc_taxed) { create(:open_order_cycle, distributors: [d], variants: [product_taxed.variants.first]) }
+      let(:oc_untaxed) { create(:open_order_cycle, distributors: [d], variants: [product_untaxed.variants.first]) }
+      let(:tax_rate) { product_taxed.tax_category.tax_rates.first }
+
+      it "updates distributions with products affected by that tax rate" do
+        expect(ProductsCache).to receive(:refresh_cache).with(d, oc_taxed)
+        ProductsCache.tax_rate_changed tax_rate
+      end
+
+      it "doesn't update distributions that aren't affected by that tax rate" do
+        expect(ProductsCache).to receive(:refresh_cache).with(d, oc_untaxed).never
+        ProductsCache.tax_rate_changed tax_rate
+      end
+    end
+
     describe "refreshing the cache" do
       let(:distributor) { double(:distributor) }
       let(:order_cycle) { double(:order_cycle) }

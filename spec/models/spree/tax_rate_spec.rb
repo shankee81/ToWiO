@@ -1,5 +1,20 @@
 module Spree
   describe TaxRate do
+    describe "products cache" do
+      let(:tax_rate) { create(:tax_rate, calculator: Calculator::FlatRate.new(preferred_amount: 0.1)) }
+
+      it "refreshes the products cache on save" do
+        expect(OpenFoodNetwork::ProductsCache).to receive(:tax_rate_changed).with(tax_rate)
+        tax_rate.amount = 123
+        tax_rate.save
+      end
+
+      it "refreshes the products cache on destroy" do
+        expect(OpenFoodNetwork::ProductsCache).to receive(:tax_rate_changed).with(tax_rate)
+        tax_rate.destroy
+      end
+    end
+
     describe "selecting tax rates to apply to an order" do
       let!(:zone) { create(:zone_with_member) }
       let!(:order) { create(:order, distributor: hub, bill_address: create(:address)) }

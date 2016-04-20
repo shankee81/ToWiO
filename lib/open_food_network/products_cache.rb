@@ -102,6 +102,17 @@ module OpenFoodNetwork
     end
 
 
+    def self.tax_rate_changed(tax_rate)
+      products = Spree::Product.where(tax_category_id: tax_rate.tax_category)
+      variants = Spree::Variant.where(product_id: products)
+
+      exchanges_featuring_variants(variants).each do |exchange|
+        refresh_cache exchange.receiver, exchange.order_cycle
+      end
+    end
+
+
+
     private
 
     def self.exchanges_featuring_variants(variants, distributor: nil)
