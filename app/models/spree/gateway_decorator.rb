@@ -12,4 +12,15 @@ Spree::Gateway.class_eval do
   # Default to live
   preference :server, :string, :default => 'live'
   preference :test_mode, :boolean, :default => false
+
+
+  # method_missing should not depend on #provider having already been called
+  def method_missing(method, *args)
+    if provider.nil? || !provider.respond_to?(method)
+      super
+    else
+      provider.send(method, *args)
+    end
+  end
+
 end
