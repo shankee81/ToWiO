@@ -1,3 +1,5 @@
+require 'spree/core/controller_helpers/respond_with_decorator'
+
 class BaseController < ApplicationController
   include Spree::Core::ControllerHelpers
   include Spree::Core::ControllerHelpers::RespondWith
