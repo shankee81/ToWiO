@@ -1,0 +1,17 @@
+- content_for(:title) do
+  Test Groups Embedding
+
+.row
+  .small-12.medium-12.columns
+    %p Begin page
+
+    = javascript_include_tag "shared/iframeResizer.min"
+    :css
+      iframe.ofn-group { width: 100%; border: none; }
+    %iframe.ofn-group{src: "/groups/farmers-markets-association/embed", scrolling: "no"}
+    :javascript
+      jQuery("iframe.ofn-group").iFrameResize();
+
+    %p End page
+
+= render partial: "shared/footer"

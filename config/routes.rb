@@ -40,6 +40,7 @@ Openfoodnetwork::Application.routes.draw do
   resources :groups, only: [:index, :show] do
     collection do
       get :signup
+      get :test_embed
     end
 
     member do
