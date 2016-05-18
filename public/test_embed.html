@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <title>
+      Test Groups Embedding
+      - Open Food Network
+    </title>
+  </head>
+  <body>
+    <p>Begin page</p>
+
+    <script src="/assets/shared/iframeResizer.min.js" type="text/javascript"></script>
+    <style>
+      iframe.ofn-group { width: 100%; border: none; }
+    </style>
+    <iframe class="ofn-group" scrolling="no" src="/groups/farmers-markets-association/embed"></iframe>
+    <script>
+      iFrameResize({}, "iframe.ofn-group");
+    </script>
+
+    <p>End page</p>
+  </body>
+</html>
