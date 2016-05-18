@@ -1,0 +1,10 @@
+body
+  // Default height of 100% makes body window-height, so not long enough to cover the entire
+  // page, affecting iframe resizer.
+  height: auto
+
+.map-container
+  map, .angular-google-map-container, google-map, .angular-google-map
+    // The default height of 100% causes iframe resizer to expand the iframe in an infinite
+    // loop. Setting an absolute height solved this.
+    height: 500px

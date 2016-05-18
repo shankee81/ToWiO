@@ -41,6 +41,10 @@ Openfoodnetwork::Application.routes.draw do
     collection do
       get :signup
     end
+
+    member do
+      get :embed
+    end
   end
 
   get '/checkout', :to => 'checkout#edit' , :as => :checkout
