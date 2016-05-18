@@ -38,70 +38,22 @@
             %tab{heading: t(:label_map),
                 active: "active(\'\')",
                 select: "select(\'\')"}
-              .map-container
-                %map{"ng-if" => "(active(\'\') && (mapShowed = true)) || mapShowed"}
-                  %google-map{options: "map.additional_options", center: "map.center", zoom: "map.zoom", styles: "map.styles", draggable: "true"}
-                    %map-search
-                    %markers{models: "mapMarkers", fit: "true",
-                    coords: "'self'", icon: "'icon'", click: "'reveal'"}
+              = render 'tab_map'
 
             %tab{heading: t(:groups_about),
                 active: "active(\'about\')",
                 select: "select(\'about\')"}
-              %h1
-                = t :groups_about
-              %p!= @group.long_description
+              = render 'tab_about'
 
             %tab{heading: t(:groups_producers),
                 active: "active(\'producers\')",
                 select: "select(\'producers\')"}
-              .producers{"ng-controller" => "GroupEnterprisesCtrl"}
-                .row
-                  .small-12.columns
-                    %h1
-                      = t :groups_producers
-                = render partial: "shared/components/enterprise_search"
-                = render partial: "producers/filters"
-
-                .row{bindonce: true}
-                  .small-12.columns
-                    .active_table
-                      %producer.active_table_node.row.animate-repeat{id: "{{producer.path}}",
-                      "ng-repeat" => "producer in filteredEnterprises = (group_producers | searchEnterprises:query | taxons:activeTaxons)",
-                      "ng-controller" => "GroupEnterpriseNodeCtrl",
-                      "ng-class" => "{'closed' : !open(), 'open' : open(), 'inactive' : !producer.active}",
-                      id: "{{producer.hash}}"}
-
-                        .small-12.columns
-                          = render partial: 'producers/skinny'
-                          = render partial: 'producers/fat'
-
-                      = render partial: 'shared/components/enterprise_no_results'
+              = render 'tab_producers'
 
             %tab{heading: t(:groups_hubs),
                 active: "active(\'hubs\')",
                 select: "select(\'hubs\')"}
-              .hubs{"ng-controller" => "GroupEnterprisesCtrl"}
-                .row
-                  .small-12.columns
-                    %h1
-                      = t :groups_hubs
-
-                = render partial: "shared/components/enterprise_search"
-                = render partial: "hub_filters"
-
-                .row{bindonce: true}
-                  .small-12.columns
-                    .active_table
-                      %hub.active_table_node.row.animate-repeat{id: "{{hub.hash}}",
-                      "ng-repeat" => "hub in filteredEnterprises = (group_hubs | searchEnterprises:query  | taxons:activeTaxons | shipping:shippingTypes | showHubProfiles:show_profiles | orderBy:['-active', '+orders_close_at'])",
-                      "ng-class" => "{'is_profile' : hub.category == 'hub_profile', 'closed' : !open(), 'open' : open(), 'inactive' : !hub.active, 'current' : current()}",
-                      "ng-controller" => "GroupEnterpriseNodeCtrl"}
-                        .small-12.columns
-                          = render partial: 'home/skinny'
-                          = render partial: 'home/fat'
-
-                      = render partial: 'shared/components/enterprise_no_results'
+              = render 'tab_hubs'
 
       .small-12.medium-12.large-3.columns
         = render partial: 'contact'

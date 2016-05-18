@@ -1,0 +1,22 @@
+.producers{"ng-controller" => "GroupEnterprisesCtrl"}
+  .row
+    .small-12.columns
+      %h1
+        = t :groups_producers
+  = render partial: "shared/components/enterprise_search"
+  = render partial: "producers/filters"
+
+  .row{bindonce: true}
+    .small-12.columns
+      .active_table
+        %producer.active_table_node.row.animate-repeat{id: "{{producer.path}}",
+        "ng-repeat" => "producer in filteredEnterprises = (group_producers | searchEnterprises:query | taxons:activeTaxons)",
+        "ng-controller" => "GroupEnterpriseNodeCtrl",
+        "ng-class" => "{'closed' : !open(), 'open' : open(), 'inactive' : !producer.active}",
+        id: "{{producer.hash}}"}
+
+          .small-12.columns
+            = render partial: 'producers/skinny'
+            = render partial: 'producers/fat'
+
+        = render partial: 'shared/components/enterprise_no_results'

@@ -1,0 +1,21 @@
+.hubs{"ng-controller" => "GroupEnterprisesCtrl"}
+  .row
+    .small-12.columns
+      %h1
+        = t :groups_hubs
+
+  = render partial: "shared/components/enterprise_search"
+  = render partial: "hub_filters"
+
+  .row{bindonce: true}
+    .small-12.columns
+      .active_table
+        %hub.active_table_node.row.animate-repeat{id: "{{hub.hash}}",
+        "ng-repeat" => "hub in filteredEnterprises = (group_hubs | searchEnterprises:query  | taxons:activeTaxons | shipping:shippingTypes | showHubProfiles:show_profiles | orderBy:['-active', '+orders_close_at'])",
+        "ng-class" => "{'is_profile' : hub.category == 'hub_profile', 'closed' : !open(), 'open' : open(), 'inactive' : !hub.active, 'current' : current()}",
+        "ng-controller" => "GroupEnterpriseNodeCtrl"}
+          .small-12.columns
+            = render partial: 'home/skinny'
+            = render partial: 'home/fat'
+
+        = render partial: 'shared/components/enterprise_no_results'
