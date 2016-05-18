@@ -11,6 +11,10 @@ class GroupsController < BaseController
   end
 
   def embed
+    truthy_values = ['y', 'yes', '1', 't', 'true']
+
+    @hide_header = !truthy_values.include?((params[:header]||'').downcase)
+
     render :show, layout: 'embedded'
   end
 
