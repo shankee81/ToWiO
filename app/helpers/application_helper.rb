@@ -15,6 +15,14 @@ module ApplicationHelper
     form_for(name, *(args << options.merge(:builder => AngularFormBuilder)), &block)
   end
 
+  def display_footer?
+    !content_for?(:no_footer)
+  end
+
+  def disable_footer
+    content_for(:no_footer) { 'x' }
+  end
+
 
   # Pass URL helper calls on to spree where applicable so that we don't need to use
   # spree.foo_path in any view rendered from non-spree-namespaced controllers.
