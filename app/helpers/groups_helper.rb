@@ -20,4 +20,10 @@ module GroupsHelper
     url.andand.sub(/^https?:\/\//i, '')
   end
 
+  def render_group_tab(tab)
+    valid_tabs = %w(map about producers hubs)
+    if valid_tabs.include? tab
+      render "tab_#{tab}"
+    end
+  end
 end

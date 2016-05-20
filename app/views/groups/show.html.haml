@@ -34,26 +34,29 @@
     .row
       .small-12.medium-12.large-9.columns
         %div{"ng-controller" => "TabsCtrl"}
-          %tabset
-            %tab{heading: t(:label_map),
-                active: "active(\'\')",
-                select: "select(\'\')"}
-              = render 'tab_map'
+          - if @sole_tab
+            = render_group_tab @sole_tab
+          - else
+            %tabset
+              %tab{heading: t(:label_map),
+                  active: "active(\'\')",
+                  select: "select(\'\')"}
+                = render 'tab_map'
 
-            %tab{heading: t(:groups_about),
-                active: "active(\'about\')",
-                select: "select(\'about\')"}
-              = render 'tab_about'
+              %tab{heading: t(:groups_about),
+                  active: "active(\'about\')",
+                  select: "select(\'about\')"}
+                = render 'tab_about'
 
-            %tab{heading: t(:groups_producers),
-                active: "active(\'producers\')",
-                select: "select(\'producers\')"}
-              = render 'tab_producers'
+              %tab{heading: t(:groups_producers),
+                  active: "active(\'producers\')",
+                  select: "select(\'producers\')"}
+                = render 'tab_producers'
 
-            %tab{heading: t(:groups_hubs),
-                active: "active(\'hubs\')",
-                select: "select(\'hubs\')"}
-              = render 'tab_hubs'
+              %tab{heading: t(:groups_hubs),
+                  active: "active(\'hubs\')",
+                  select: "select(\'hubs\')"}
+                = render 'tab_hubs'
 
       .small-12.medium-12.large-3.columns
         = render partial: 'contact'

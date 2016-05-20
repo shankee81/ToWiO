@@ -14,6 +14,7 @@ class GroupsController < BaseController
     truthy_values = ['y', 'yes', '1', 't', 'true']
 
     @hide_header = !truthy_values.include?((params[:header]||'').downcase)
+    @sole_tab = params[:sole_tab]
 
     render :show, layout: 'embedded'
   end
