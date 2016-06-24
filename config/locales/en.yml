@@ -100,8 +100,10 @@ en:
     # General form elements
     quick_search: Quick Search
     clear_all: Clear All
-    start_date: "Start Date"
-    end_date: "End Date"
+    start_date: Start Date
+    end_date: End Date
+    show_more: Show more
+    show_n_more: Show %{num} more
 
     columns: Columns
     actions: Actions
@@ -567,9 +569,13 @@ en:
   terms_of_service: "Terms of service"
   on_demand: On demand
   none: None
+  days: days
 
+
+  label_shop: "Shop"
   label_shops: "Shops"
   label_map: "Map"
+  label_producer: "Producer"
   label_producers: "Producers"
   label_groups: "Groups"
   label_about: "About"
