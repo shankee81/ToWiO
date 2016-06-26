@@ -270,10 +270,6 @@ en:
         order_error: "Some errors must be resolved before you can update orders.\nAny fields with red borders contain errors."
         variants_without_unit_value: "WARNING: Some variants do not have a unit value"
 
-    order_cycles:
-      edit:
-        choose_products_from: "Choose Products From:"
-
     enterprise:
       select_outgoing_oc_products_from: Select outgoing OC products from
 
@@ -479,6 +475,8 @@ en:
         tags: Tags
         delivery_detaisl: Pickup / Delivery details
         debug_info: Debug information
+      index:
+        involving: Involving
       name_and_timing_form:
         name: Name
         orders_open: Orders open at
@@ -498,6 +496,7 @@ en:
       edit:
         advanced_settings: Advanced Settings
         update_and_close: Update and Close
+        choose_products_from: "Choose Products From:"
     producer_properties:
       form:
         property: Property
