@@ -307,6 +307,11 @@ ActiveRecord::Schema.define(:version => 20160921060442) do
 
   add_index "inventory_items", ["enterprise_id", "variant_id"], :name => "index_inventory_items_on_enterprise_id_and_variant_id", :unique => true
 
+  create_table "order_cycle_schedules", :force => true do |t|
+    t.integer "order_cycle_id", :null => false
+    t.integer "schedule_id",    :null => false
+  end
+
   create_table "order_cycles", :force => true do |t|
     t.string   "name"
     t.datetime "orders_open_at"
@@ -1163,6 +1168,9 @@ ActiveRecord::Schema.define(:version => 20160921060442) do
   add_foreign_key "exchanges", "enterprises", name: "exchanges_receiver_id_fk", column: "receiver_id"
   add_foreign_key "exchanges", "enterprises", name: "exchanges_sender_id_fk", column: "sender_id"
   add_foreign_key "exchanges", "order_cycles", name: "exchanges_order_cycle_id_fk"
+
+  add_foreign_key "order_cycle_schedules", "order_cycles", name: "oc_schedules_order_cycle_id_fk"
+  add_foreign_key "order_cycle_schedules", "schedules", name: "oc_schedules_schedule_id_fk"
 
   add_foreign_key "order_cycles", "enterprises", name: "order_cycles_coordinator_id_fk", column: "coordinator_id"
 
