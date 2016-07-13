@@ -3,9 +3,11 @@ require 'rubygems'
 # Require pry when we're not inside Travis-CI
 require 'pry' unless ENV['CI']
 
-require 'knapsack'
-Knapsack.tracker.config({enable_time_offset_warning: false}) unless ENV['CI']
-Knapsack::Adapters::RSpecAdapter.bind
+if ENV['CI']
+  require 'knapsack'
+  Knapsack.tracker.config({ time_offset_in_seconds: 60 })
+  Knapsack::Adapters::RSpecAdapter.bind
+end
 
 ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../../config/environment", __FILE__)
