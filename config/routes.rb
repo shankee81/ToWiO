@@ -146,7 +146,7 @@ Openfoodnetwork::Application.routes.draw do
       put :bulk_update, on: :collection
     end
 
-    resources :schedules, only: [:index, :create, :update], format: :json
+    resources :schedules, only: [:index, :create, :update, :destroy], format: :json
   end
 
   namespace :api do
