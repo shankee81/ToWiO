@@ -152,7 +152,7 @@ Openfoodnetwork::Application.routes.draw do
 
     resource :invoice_settings, only: [:edit, :update]
 
-    resources :schedules, only: [:index, :create, :update], format: :json
+    resources :schedules, only: [:index, :create, :update, :destroy], format: :json
   end
 
   namespace :api do
