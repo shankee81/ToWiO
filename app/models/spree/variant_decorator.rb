@@ -41,6 +41,13 @@ Spree::Variant.class_eval do
     select('DISTINCT spree_variants.*')
   }
 
+  scope :in_schedule, lambda { |schedule|
+    joins(exchanges: { order_cycle: :schedule}).
+    merge(Exchange.outgoing).
+    where(schedules: { id: schedule}).
+    select('DISTINCT spree_variants.*')
+  }
+
   scope :for_distribution, lambda { |order_cycle, distributor|
     where('spree_variants.id IN (?)', order_cycle.variants_distributed_by(distributor))
   }
@@ -53,6 +60,11 @@ Spree::Variant.class_eval do
     return where("1=0") unless enterprise.present?
     joins("LEFT OUTER JOIN (SELECT * from inventory_items WHERE enterprise_id = #{sanitize enterprise.andand.id}) AS o_inventory_items ON o_inventory_items.variant_id = spree_variants.id")
     .where("o_inventory_items.id IS NULL OR o_inventory_items.visible = (?)", true)
+  }
+
+  scope :stockable_by, lambda { |enterprise|
+    return where("1=0") unless enterprise.present?
+    joins(:product).where(spree_products: { id: Spree::Product.stockable_by(enterprise).pluck(:id) })
   }
 
   # Define sope as class method to allow chaining with other scopes filtering id.
