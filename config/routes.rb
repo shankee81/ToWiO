@@ -64,6 +64,7 @@ Openfoodnetwork::Application.routes.draw do
       post :search
       get :check_permalink
     end
+    
 
     member do
       get :shop
@@ -93,6 +94,7 @@ Openfoodnetwork::Application.routes.draw do
       end
 
       get "/stripe_connect", to: "enterprises#stripe_connect"
+
 
       member do
         get :welcome
