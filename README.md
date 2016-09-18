@@ -119,7 +119,7 @@ If you want karma to automatically rerun the tests on file modification, use:
 * Maikel Linke (https://github.com/mkllnk)
 * Lynne Davis (https://github.com/lin-d-hop)
 * Paul Mackay (https://github.com/pmackay)
-* Steve Petitt (https://github.com/stveep)
+* Steve Pettitt (https://github.com/stveep)
 
 
 ## Licence
