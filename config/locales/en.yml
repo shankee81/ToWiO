@@ -474,6 +474,11 @@ en:
       user_guide_link:
         user_guide: User Guide
 
+    standing_orders:
+      details:
+        details: 'Details'
+
+
   home:
     hubs:
       show_closed_shops: "Show closed shops"
