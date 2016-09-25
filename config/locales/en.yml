@@ -537,6 +537,7 @@ en:
         enable_receipt_printing?: Show options for printing receipts using thermal printers in order dropdown?
 
     standing_orders:
+      standing_orders: Standing Orders
       new: New Standing Order
       create: Create Standing Order
       steps:
