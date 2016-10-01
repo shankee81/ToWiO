@@ -57,14 +57,14 @@ Openfoodnetwork::Application.routes.draw do
   put '/checkout', :to => 'checkout#update' , :as => :update_checkout
   get '/checkout/paypal_payment/:order_id', to: 'checkout#paypal_payment', as: :paypal_payment
 
-  get '/stripe/callback', :to => 'admin/enterprises#stripe_connect_callback' 
+  get '/stripe/callback', :to => 'admin/enterprises#stripe_connect_callback'
 
   resources :enterprises do
     collection do
       post :search
       get :check_permalink
     end
-    
+
 
     member do
       get :shop
@@ -75,6 +75,7 @@ Openfoodnetwork::Application.routes.draw do
   get "/enterprises/:permalink", to: redirect("/") # Legacy enterprise URL
 
   devise_for :enterprise, controllers: { confirmations: 'enterprise_confirmations' }
+
 
   namespace :admin do
     resources :order_cycles do
@@ -94,7 +95,7 @@ Openfoodnetwork::Application.routes.draw do
       end
 
       get "/stripe_connect", to: "enterprises#stripe_connect"
-
+      resources :stripe_accounts
 
       member do
         get :welcome
