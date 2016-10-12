@@ -250,6 +250,7 @@ ActiveRecord::Schema.define(:version => 20161222022340) do
     t.boolean  "require_login",            :default => false,  :null => false
     t.boolean  "allow_guest_orders",       :default => true,   :null => false
     t.boolean  "enable_standing_orders",   :default => false,  :null => false
+    t.boolean  "allow_order_changes",      :default => false,  :null => false
   end
 
   add_index "enterprises", ["address_id"], :name => "index_enterprises_on_address_id"
