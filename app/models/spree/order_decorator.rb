@@ -261,6 +261,10 @@ Spree::Order.class_eval do
     payments.select {|p| p.state == "checkout"} # Original definition
   end
 
+  def can_remove_items?(user)
+    user_id == user.id && distributor.andand.allow_order_changes? && order_cycle.andand.open?
+  end
+
   private
 
   def shipping_address_from_distributor

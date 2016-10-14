@@ -92,4 +92,8 @@ module EnterprisesHelper
   def standing_orders_enabled?
     spree_current_user.admin? || spree_current_user.enterprises.where(enable_standing_orders: true).any?
   end
+
+  def show_bought_items?
+    current_order.andand.distributor.andand.allow_order_changes? && current_order.finalised_line_items.present?
+  end
 end
