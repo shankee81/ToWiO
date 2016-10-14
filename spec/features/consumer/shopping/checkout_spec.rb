@@ -121,7 +121,7 @@ feature "As a consumer I want to check out my cart", js: true, retry: 3 do
           user.save!
         end
 
-        it "checks out successfully" do
+        it "checks out successfully", retry: 3 do
           visit checkout_path
           choose sm2.name
           toggle_payment
