@@ -235,6 +235,9 @@ class AbilityDecorator
       user.enterprises.include?(standing_order.shop)
     end
     can [:admin, :build], StandingLineItem
+    can [:destroy], StandingLineItem do |standing_line_item|
+      user.enterprises.include?(standing_line_item.standing_order.shop)
+    end
   end
 
 
