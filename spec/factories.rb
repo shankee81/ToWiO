@@ -1,5 +1,5 @@
 require 'ffaker'
-require 'spree/core/testing_support/factories'
+require 'spree/testing_support/factories'
 
 FactoryGirl.define do
   factory :classification, class: Spree::Classification do
