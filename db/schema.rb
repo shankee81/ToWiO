@@ -319,8 +319,9 @@ ActiveRecord::Schema.define(:version => 20161215230219) do
     t.datetime "orders_open_at"
     t.datetime "orders_close_at"
     t.integer  "coordinator_id"
-    t.datetime "created_at",      :null => false
-    t.datetime "updated_at",      :null => false
+    t.datetime "created_at",                :null => false
+    t.datetime "updated_at",                :null => false
+    t.datetime "standing_orders_placed_at"
   end
 
   create_table "producer_properties", :force => true do |t|
