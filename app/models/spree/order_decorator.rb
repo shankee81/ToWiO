@@ -241,6 +241,12 @@ Spree::Order.class_eval do
     end
   end
 
+  # Override or Spree method. Used to prevent payments on standing orders from being processed in the normal way.
+  # ie. they are 'hidden' from processing logic until after the order cycle has closed.
+  def pending_payments
+    return [] if standing_order.present? && order_cycle.orders_close_at.andand > Time.now
+    payments.select {|p| p.state == "checkout"} # Original definition
+  end
 
   private
 
