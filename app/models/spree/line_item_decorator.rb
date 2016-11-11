@@ -47,9 +47,9 @@ Spree::LineItem.class_eval do
 
 
   def cap_quantity_at_stock!
+    scoper.scope(variant)
     update_attributes!(quantity: variant.on_hand) if quantity > variant.on_hand
   end
-
 
   def has_tax?
     adjustments.included_tax.any?
@@ -94,6 +94,11 @@ Spree::LineItem.class_eval do
   end
 
   private
+
+  def scoper
+    return @scoper unless @scope.nil?
+    @scoper = OpenFoodNetwork::ScopeVariantToHub.new(order.distributor)
+  end
 
   def calculate_final_weight_volume
     if final_weight_volume.present? && quantity_was > 0
