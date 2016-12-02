@@ -156,6 +156,7 @@ Openfoodnetwork::Application.routes.draw do
 
     resources :standing_order_orders, only: [], format: :json do
       put :cancel, on: :member
+      put :resume, on: :member
     end
   end
 
