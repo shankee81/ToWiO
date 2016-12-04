@@ -3,7 +3,7 @@ require 'spree/core/url_helpers'
 class Api::Admin::StandingOrderOrderSerializer < ActiveModel::Serializer
   include Spree::Core::UrlHelpers
 
-  attributes :id, :status, :edit_path, :number, :completed_at, :order_cycle_id, :total
+  attributes :id, :state, :edit_path, :number, :completed_at, :order_cycle_id, :total
 
   def total
     object.total.to_money.to_s
