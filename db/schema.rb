@@ -11,7 +11,6 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-
 ActiveRecord::Schema.define(:version => 20161215230219) do
 
   create_table "account_invoices", :force => true do |t|
@@ -1066,7 +1065,7 @@ ActiveRecord::Schema.define(:version => 20161215230219) do
   create_table "standing_order_orders", :force => true do |t|
     t.integer  "standing_order_id", :null => false
     t.integer  "order_id",          :null => false
-    t.datetime "cancelled_at"
+    t.datetime "canceled_at"
     t.datetime "created_at",        :null => false
     t.datetime "updated_at",        :null => false
   end
