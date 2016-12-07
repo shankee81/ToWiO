@@ -87,6 +87,7 @@ en:
   show_all: Show all
   show_all_with_more: "Show All (%{num}  More)"
   cancel: Cancel
+  ok: Ok
 
   admin:
     # Common properties / models
@@ -563,6 +564,8 @@ en:
       orders:
         number: Number
         status: Status
+      confirm_cancel_msg: Are you sure you want to cancel this standing order? This action cannot be undone.
+      cancel_failure_msg: 'Sorry, cancellation failed!'
 
   home:
     hubs:
@@ -1087,6 +1090,7 @@ See the %{link} to find out more about %{sitename}'s features and to start using
   password: Password
   remember_me: Remember Me
   are_you_sure: "Are you sure?"
+  yes_i_am_sure: Yes, I'm sure
   orders_open: Orders open
   closing: "Closing "
   going_back_to_home_page: "Taking you back to the home page"
