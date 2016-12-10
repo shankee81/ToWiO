@@ -18,7 +18,7 @@ describe ProductsCacheIntegrityCheckerJob do
     end
 
     it "deals with nil cached_json" do
-      Rails.cache.clear
+      Rails.cache.delete "products-json-#{distributor.id}-#{order_cycle.id}"
       expect(Bugsnag).to receive(:notify)
       run_job job
     end
