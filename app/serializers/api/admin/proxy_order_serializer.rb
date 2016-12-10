@@ -1,6 +1,6 @@
 require 'spree/core/url_helpers'
 
-class Api::Admin::StandingOrderOrderSerializer < ActiveModel::Serializer
+class Api::Admin::ProxyOrderSerializer < ActiveModel::Serializer
   include Spree::Core::UrlHelpers
 
   attributes :id, :state, :edit_path, :number, :completed_at, :order_cycle_id, :total
