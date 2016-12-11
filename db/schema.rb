@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20161210225156) do
+ActiveRecord::Schema.define(:version => 20161210235939) do
 
   create_table "account_invoices", :force => true do |t|
     t.integer  "user_id",    :null => false
@@ -354,8 +354,10 @@ ActiveRecord::Schema.define(:version => 20161210225156) do
     t.datetime "canceled_at"
     t.datetime "created_at",        :null => false
     t.datetime "updated_at",        :null => false
+    t.integer  "order_cycle_id",    :null => false
   end
 
+  add_index "proxy_orders", ["order_cycle_id"], :name => "index_proxy_orders_on_order_cycle_id"
   add_index "proxy_orders", ["order_id"], :name => "index_proxy_orders_on_order_id", :unique => true
   add_index "proxy_orders", ["standing_order_id"], :name => "index_proxy_orders_on_standing_order_id"
 
@@ -1222,6 +1224,7 @@ ActiveRecord::Schema.define(:version => 20161210225156) do
   add_foreign_key "product_distributions", "enterprises", name: "product_distributions_distributor_id_fk", column: "distributor_id"
   add_foreign_key "product_distributions", "spree_products", name: "product_distributions_product_id_fk", column: "product_id"
 
+  add_foreign_key "proxy_orders", "order_cycles", name: "proxy_orders_order_cycle_id_fk"
   add_foreign_key "proxy_orders", "spree_orders", name: "order_id_fk", column: "order_id"
   add_foreign_key "proxy_orders", "standing_orders", name: "standing_order_id_fk"
 
