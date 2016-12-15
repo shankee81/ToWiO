@@ -341,6 +341,10 @@ en:
           allow_guest_orders_tip: "Allow checkout as guest or require a registered user."
           allow_guest_orders_false: "Require login to order"
           allow_guest_orders_true: "Allow guest checkout"
+          enable_standing_orders: "Standing Orders"
+          enable_standing_orders_tip: "Enable standing/repeating order functionality?"
+          enable_standing_orders_false: "Disabled"
+          enable_standing_orders_true: "Enabled"
           shopfront_message_placeholder: \
             An optional explanation for customers detailing how your shopfront works, \
             to be displayed above the product list on your shop page.
