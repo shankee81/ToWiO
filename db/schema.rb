@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20161211210859) do
+ActiveRecord::Schema.define(:version => 20161215032136) do
 
   create_table "account_invoices", :force => true do |t|
     t.integer  "user_id",    :null => false
@@ -249,6 +249,7 @@ ActiveRecord::Schema.define(:version => 20161211210859) do
     t.string   "email_address"
     t.boolean  "require_login",            :default => false,  :null => false
     t.boolean  "allow_guest_orders",       :default => true,   :null => false
+    t.boolean  "enable_standing_orders",   :default => false,  :null => false
   end
 
   add_index "enterprises", ["address_id"], :name => "index_enterprises_on_address_id"
