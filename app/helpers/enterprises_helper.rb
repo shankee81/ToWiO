@@ -88,4 +88,8 @@ module EnterprisesHelper
   def remaining_trial_days(enterprise)
     distance_of_time_in_words(Time.zone.now, enterprise.shop_trial_start_date + Spree::Config[:shop_trial_length_days].days)
   end
+
+  def standing_orders_enabled?
+    spree_current_user.admin? || spree_current_user.enterprises.where(enable_standing_orders: true).any?
+  end
 end
