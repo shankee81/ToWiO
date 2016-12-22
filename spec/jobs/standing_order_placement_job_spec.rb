@@ -1,6 +1,51 @@
 require 'spec_helper'
 
 describe StandingOrderPlacementJob do
+  let(:job) { StandingOrderPlacementJob.new }
+
+  describe "finding proxy_orders that are ready to be placed" do
+    let(:shop) { create(:distributor_enterprise) }
+    let(:order_cycle1) { create(:simple_order_cycle, coordinator: shop, orders_open_at: 1.minute.ago, orders_close_at: 10.minutes.from_now) }
+    let(:order_cycle2) { create(:simple_order_cycle, coordinator: shop, orders_open_at: 10.minutes.ago, orders_close_at: 1.minute.ago) }
+    let(:schedule) { create(:schedule, order_cycles: [order_cycle1, order_cycle2]) }
+    let(:standing_order1) { create(:standing_order, shop: shop, schedule: schedule) }
+    let(:standing_order2) { create(:standing_order, shop: shop, schedule: schedule, paused_at: 1.minute.ago) }
+    let(:standing_order3) { create(:standing_order, shop: shop, schedule: schedule, canceled_at: 1.minute.ago) }
+    let!(:proxy_order1) { create(:proxy_order, standing_order: standing_order1, order_cycle: order_cycle2) } # OC closed
+    let!(:proxy_order2) { create(:proxy_order, standing_order: standing_order2, order_cycle: order_cycle1) } # Standing Order Paused
+    let!(:proxy_order3) { create(:proxy_order, standing_order: standing_order3, order_cycle: order_cycle1) } # Standing Order Cancelled
+    let!(:proxy_order4) { create(:proxy_order, standing_order: standing_order1, order_cycle: order_cycle1, canceled_at: 5.minutes.ago) } # Cancelled
+    let!(:proxy_order5) { create(:proxy_order, standing_order: standing_order1, order_cycle: order_cycle1, placed_at: 5.minutes.ago) } # Already placed
+    let!(:proxy_order6) { create(:proxy_order, standing_order: standing_order1, order_cycle: order_cycle1) } # OK
+
+    it "returns proxy orders that meet the criteria" do
+      proxy_orders = job.send(:proxy_orders)
+      expect(proxy_orders).to include proxy_order6
+      expect(proxy_orders).to_not include proxy_order1, proxy_order2, proxy_order3, proxy_order4, proxy_order5
+    end
+  end
+
+  describe "performing the job" do
+    context "when unplaced proxy_orders exist" do
+      let!(:proxy_order) { create(:proxy_order) }
+
+      before do
+        allow(job).to receive(:proxy_orders) { ProxyOrder.where(id: proxy_order.id) }
+        allow(job).to receive(:process)
+      end
+
+      it "marks placeable proxy_orders as processed by setting placed_at" do
+        expect{job.perform}.to change{proxy_order.reload.placed_at}
+        expect(proxy_order.placed_at).to be_within(5.seconds).of Time.now
+      end
+
+      it "processes placeable proxy_orders" do
+        job.perform
+        expect(job).to have_received(:process).with(proxy_order.reload.order)
+      end
+    end
+  end
+
   describe "checking that line items are available to purchase" do
     let(:order_cycle) { create(:simple_order_cycle) }
     let(:shop) { order_cycle.coordinator }
@@ -12,8 +57,6 @@ describe StandingOrderPlacementJob do
     let!(:line_item1) { create(:line_item, order: order, variant: variant1, quantity: 3) }
     let!(:line_item2) { create(:line_item, order: order, variant: variant2, quantity: 3) }
     let!(:line_item3) { create(:line_item, order: order, variant: variant3, quantity: 3) }
-
-    let!(:job) { StandingOrderPlacementJob.new(order_cycle) }
 
     before { Spree::Config.set(:allow_backorders, false) }
 
@@ -68,8 +111,6 @@ describe StandingOrderPlacementJob do
     let!(:order) { proxy_order.initialise_order! }
     let(:changes) { {} }
 
-    let!(:job) { StandingOrderPlacementJob.new(proxy_order.order_cycle) }
-
     before do
       expect_any_instance_of(Spree::Payment).to_not receive(:process!)
       allow(job).to receive(:cap_quantity_and_store_changes) { changes }
@@ -110,8 +151,6 @@ describe StandingOrderPlacementJob do
     let!(:order) { proxy_order.initialise_order! }
     let(:mail_mock) { double(:mailer_mock) }
     let(:changes) { double(:changes) }
-
-    let!(:job) { StandingOrderPlacementJob.new(proxy_order.order_cycle) }
 
     before do
       allow(Spree::OrderMailer).to receive(:standing_order_email) { mail_mock }
