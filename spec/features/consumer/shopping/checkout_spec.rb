@@ -66,8 +66,10 @@ feature "As a consumer I want to check out my cart", js: true, retry: 3 do
 
       before do
         quick_login_as(user)
-        visit checkout_path
+      end
 
+      it "allows user to save default billing address and shipping address" do
+        visit checkout_path
         toggle_shipping
         choose sm1.name
         toggle_payment
@@ -92,9 +94,7 @@ feature "As a consumer I want to check out my cart", js: true, retry: 3 do
         toggle_shipping
         check "Shipping address same as billing address?"
         check "Save as default shipping address"
-      end
 
-      it "sets user's default billing address and shipping address" do
         user.bill_address.should be_nil
         user.ship_address.should be_nil
 
@@ -112,6 +112,26 @@ feature "As a consumer I want to check out my cart", js: true, retry: 3 do
 
         user.reload.bill_address.address1.should eq '123 Your Head'
         user.reload.ship_address.address1.should eq '123 Your Head'
+      end
+
+      context "when the user has a preset shipping and billing address" do
+        before do
+          user.bill_address = build(:address)
+          user.ship_address = build(:address)
+          user.save!
+        end
+
+        it "checks out successfully" do
+          visit checkout_path
+          choose sm2.name
+          toggle_payment
+          choose pm1.name
+
+          expect do
+            place_order
+            page.should have_content "Your order has been processed successfully"
+          end.to enqueue_job ConfirmOrderJob
+        end
       end
     end
 
@@ -388,31 +408,6 @@ feature "As a consumer I want to check out my cart", js: true, retry: 3 do
             end
           end
         end
-      end
-    end
-
-    context "when the customer has a pre-set shipping and billing address" do
-      before do
-        # Load up the customer's order and give them a shipping and billing address
-        # This is equivalent to when the customer has ordered before and their addresses
-        # are pre-populated.
-        o = Spree::Order.last
-        o.ship_address = build(:address)
-        o.bill_address = build(:address)
-        o.save!
-      end
-
-      it "checks out successfully" do
-        visit checkout_path
-        checkout_as_guest
-        choose sm2.name
-        toggle_payment
-        choose pm1.name
-
-        expect do
-          place_order
-          page.should have_content "Your order has been processed successfully"
-        end.to enqueue_job ConfirmOrderJob
       end
     end
   end
