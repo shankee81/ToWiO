@@ -85,6 +85,7 @@ en:
   show_all: Show all
   cancel: Cancel
   ok: Ok
+  copy: Copy
 
   admin:
     # Common properties / models
