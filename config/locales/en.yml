@@ -228,7 +228,9 @@ en:
 
     enterprises:
       index:
-        producer?: Producer?
+        title: Enterprises
+        new_enterprise: New Enterprise
+        producer?: "Producer?"
         package: Package
         status: Status
         manage: Manage
@@ -340,7 +342,7 @@ en:
           add_new_rule: '+ Add A New Rule'
           add_new_tag: '+ Add A New Tag'
         users:
-          email_confirmation_text: Email confirmation is pending.<br />We've sent a confirmation email to
+          email_confirmation_notice_html: "Email confirmation is pending. We've sent a confirmation email to %{email}."
           resend: Resend
           owner: 'Owner'
           owner_tip: The primary user responsible for this enterprise.
@@ -397,9 +399,6 @@ en:
       edit:
         editing: 'Editing:'
         back_link: Back to enterprises list
-      index:
-        title: Enterprises
-        new_enterprise: New Enterprise
       new:
         title: New Enterprise
         back_link: Back to enterprises list
