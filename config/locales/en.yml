@@ -177,6 +177,8 @@ en:
       properties:
         property_name: Property Name
         inherited_property: Inherited Property
+      variants:
+        to_order_tip: "Items made to order do not have a set stock level, such as loaves of bread made fresh to order."
 
     variant_overrides:
       loading_flash:
