@@ -111,6 +111,8 @@ fr:
         select_country: 'Choisir le pays'
         select_state: 'Choisir le département'
         edit: 'Modifier'
+        update_address: 'Mettre à jour l''adresse'
+        confirm_delete: 'Confirmer suppression?'
     cache_settings:
       show:
         distributor: Distributeur
@@ -576,7 +578,9 @@ fr:
   checkout_as_guest: "Régler en mode invité"
   checkout_details: "Vos informations"
   checkout_billing: "Informations de facturation"
+  checkout_default_bill_address: "Sauvegarder comme adresse de facturation par défaut"
   checkout_shipping: Informations de livraison
+  checkout_default_ship_address: "Sauvegarder comme adresse de livraison par défaut"
   checkout_method_free: Gratuit
   checkout_address_same: Adresse de livraison identique à l'adresse de facturation?
   checkout_ready_for: "Prêt pour:"
@@ -1217,6 +1221,7 @@ fr:
   validation_msg_tax_category_cant_be_blank: "^Veuillez sélectionner la TVA applicable"
   validation_msg_is_associated_with_an_exising_customer: "est associé à un acheteur existant"
   spree:
+    zipcode: Code postal
     shipment_states:
       backorder: réapprovisionnement
       partial: partiel
