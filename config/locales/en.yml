@@ -542,6 +542,9 @@ en:
         advanced_settings: Advanced Settings
         update_and_close: Update and Close
         choose_products_from: "Choose Products From:"
+      destroy_errors:
+        orders_present: That order cycle has been selected by a customer and cannot be deleted. To prevent customers from accessing it, please close it instead.
+        schedule_present: That order cycle is linked to a schedule and cannot be deleted. Please unlink or delete the schedule first.
     producer_properties:
       form:
         property: Property
