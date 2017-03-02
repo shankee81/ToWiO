@@ -155,11 +155,17 @@ module Admin
     end
 
     def protect_invalid_destroy
-      begin
-        yield
-      rescue ActiveRecord::InvalidForeignKey
+      # Can't delete if OC is linked to any orders or schedules
+      if @order_cycle.schedules.any?
         redirect_to main_app.admin_order_cycles_url
-        flash[:error] = "That order cycle has been selected by a customer and cannot be deleted. To prevent customers from accessing it, please close it instead."
+        flash[:error] = I18n.t('admin.order_cycles.destroy_errors.schedule_present')
+      else
+        begin
+          yield
+        rescue ActiveRecord::InvalidForeignKey
+          redirect_to main_app.admin_order_cycles_url
+          flash[:error] = I18n.t('admin.order_cycles.destroy_errors.orders_present')
+        end
       end
     end
 
