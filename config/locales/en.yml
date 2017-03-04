@@ -21,6 +21,13 @@ en:
       spree/order:
         payment_state: Payment State
         shipment_state: Shipment State
+  activemodel:
+    errors:
+      models:
+        standing_order_form:
+          attributes:
+            standing_line_items:
+              not_available: "^%{name} is not available from the selected schedule"
   devise:
     failure:
       invalid: |
