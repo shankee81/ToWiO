@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20161215230219) do
+ActiveRecord::Schema.define(:version => 20170314132401) do
 
   create_table "account_invoices", :force => true do |t|
     t.integer  "user_id",    :null => false
@@ -1020,6 +1020,7 @@ ActiveRecord::Schema.define(:version => 20161215230219) do
     t.string   "unit_description",                               :default => ""
     t.string   "display_name"
     t.string   "display_as"
+    t.datetime "import_date"
   end
 
   add_index "spree_variants", ["product_id"], :name => "index_variants_on_product_id"
@@ -1088,6 +1089,7 @@ ActiveRecord::Schema.define(:version => 20161215230219) do
     t.string   "sku"
     t.boolean  "on_demand"
     t.datetime "permission_revoked_at"
+    t.datetime "import_date"
   end
 
   add_index "variant_overrides", ["variant_id", "hub_id"], :name => "index_variant_overrides_on_variant_id_and_hub_id"

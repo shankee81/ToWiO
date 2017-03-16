@@ -18,6 +18,18 @@ module EnterprisesHelper
     shipping_methods.uniq
   end
 
+  def product_import_dates
+    import_dates = Spree::Variant.
+      select('spree_variants.import_date').
+      joins(:product).
+      where('spree_products.supplier_id IN (?)
+      AND spree_variants.is_master = false
+      AND spree_variants.import_date IS NOT NULL
+      AND spree_variants.deleted_at IS NULL', editable_enterprises.collect(&:id))
+
+    import_dates.uniq.collect(&:import_date)
+  end
+
   def available_payment_methods
     return [] unless current_distributor.present?
     payment_methods = current_distributor.payment_methods.available(:front_end).all
