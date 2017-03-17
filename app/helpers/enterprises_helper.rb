@@ -27,7 +27,16 @@ module EnterprisesHelper
       AND spree_variants.import_date IS NOT NULL
       AND spree_variants.deleted_at IS NULL', editable_enterprises.collect(&:id))
 
-    import_dates.uniq.collect(&:import_date)
+    import_dates.uniq.collect(&:import_date).sort.reverse
+  end
+
+  def inventory_import_dates
+    import_dates = VariantOverride.
+      select('variant_overrides.import_date').
+      where('variant_overrides.hub_id IN (?)
+      AND variant_overrides.import_date IS NOT NULL', editable_enterprises.collect(&:id))
+
+    import_dates.uniq.collect(&:import_date).sort.reverse
   end
 
   def available_payment_methods
