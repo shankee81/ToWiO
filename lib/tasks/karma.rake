@@ -1,13 +1,21 @@
 namespace :karma  do
-  task :start => :environment do
-    with_tmp_config :start
+  task :start => :environment do |task|
+    invoke_in_test_env task.name, :start
   end
 
-  task :run => :environment do
-    with_tmp_config :start, "--single-run"
+  task :run => :environment do |task|
+    invoke_in_test_env task.name, :start, "--single-run"
   end
 
   private
+
+  def invoke_in_test_env(task_name, command, args = nil)
+    if Rails.env == 'test'
+      with_tmp_config command, args
+    else
+      system("bundle exec rake #{task_name} RAILS_ENV=test")
+    end
+  end
 
   def with_tmp_config(command, args = nil)
     Tempfile.open('karma_unit.js', Rails.root.join('tmp') ) do |f|
