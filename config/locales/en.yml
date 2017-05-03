@@ -205,6 +205,11 @@ en:
         finalise_user_invoice_explained: "Use this button to finalize all invoices in the system for the previous calendar month. This task can be set up to run automatically once a month."
         update_user_invoices: "Update User Invoices"
 
+    shopfront_settings:
+      embedded_shopfront_settings: Embedded Shopfront Settings
+      enable_embedded_shopfronts: Enable Embedded Shopfronts
+      embedded_shopfronts_whitelist: External Domains Whitelist
+
     business_model_configuration:
       edit:
         business_model_configuration: "Business Model"
