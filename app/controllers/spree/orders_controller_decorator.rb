@@ -225,21 +225,28 @@ Spree::OrdersController.class_eval do
   end
 
   def order_to_update
+    return @order_to_update if defined? @order_to_update
+    return @order_to_update = current_order unless params[:id]
+    @order_to_update = changeable_order_from_number
+  end
+
+  # If a specific order is requested, return it if it is COMPLETE and
+  # changes are allowed and the user has access. Return nil if not.
+  def changeable_order_from_number
     order = Spree::Order.complete.find_by_number(params[:id])
-    return order if order.andand.changes_allowed? && can?(:update, order)
-    current_order
+    return nil unless order.andand.changes_allowed? && can?(:update, order)
+    order
   end
 
   def check_at_least_one_line_item
-    order = order_to_update
-    return unless order.complete?
+    return unless order_to_update.andand.complete?
 
     items = params[:order][:line_items_attributes]
     .andand.select{ |k,attrs| attrs["quantity"].to_i > 0 }
 
     if items.empty?
       flash[:error] = I18n.t(:orders_cannot_remove_the_final_item)
-      redirect_to order_path(order)
+      redirect_to order_path(order_to_update)
     end
   end
 end

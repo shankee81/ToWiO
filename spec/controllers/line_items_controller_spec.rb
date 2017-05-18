@@ -19,7 +19,7 @@ describe LineItemsController do
     end
 
     it "lists items bought by the user from the same shop in the same order_cycle" do
-      get :index, { format: :json }
+      get :bought, { format: :json }
       expect(response.status).to eq 200
       json_response = JSON.parse(response.body)
       expect(json_response.length).to eq completed_order.line_items(:reload).count
@@ -39,18 +39,18 @@ describe LineItemsController do
 
     context "without a line item id" do
       it "fails and raises an error" do
-        expect { delete :destroy }.to raise_error
+        delete :destroy
+        expect(response.status).to eq 404
       end
     end
 
     context "with a line item id" do
       let(:params) { { format: :json, id: item } }
 
-      context "without a user" do
+      context "where the item's order is not associated with the user" do
         it "denies deletion" do
           delete :destroy, params
           expect(response.status).to eq 403
-          expect { item.reload }.to_not raise_error
         end
       end
 
@@ -61,7 +61,6 @@ describe LineItemsController do
           it "denies deletion" do
             delete :destroy, params
             expect(response.status).to eq 403
-            expect { item.reload }.to_not raise_error
           end
         end
 
@@ -72,7 +71,6 @@ describe LineItemsController do
             it "denies deletion" do
               delete :destroy, params
               expect(response.status).to eq 403
-              expect { item.reload }.to_not raise_error
             end
           end
 
@@ -82,7 +80,6 @@ describe LineItemsController do
               it "denies deletion" do
                 delete :destroy, params
                 expect(response.status).to eq 403
-                expect { item.reload }.to_not raise_error
               end
             end
 
@@ -92,7 +89,7 @@ describe LineItemsController do
               it "deletes the line item" do
                 delete :destroy, params
                 expect(response.status).to eq 204
-                expect { item.reload }.to raise_error
+                expect { item.reload }.to raise_error ActiveRecord::RecordNotFound
               end
             end
           end
