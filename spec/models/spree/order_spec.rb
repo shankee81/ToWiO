@@ -276,6 +276,50 @@ describe Spree::Order do
     end
   end
 
+  describe "getting a hash of all taxes" do
+    let(:zone)            { create(:zone_with_member) }
+    let(:coordinator)     { create(:distributor_enterprise, charges_sales_tax: true) }
+
+    let(:tax_rate10)      { create(:tax_rate, included_in_price: true, calculator: Spree::Calculator::DefaultTax.new, amount: 0.1, zone: zone) }
+    let(:tax_rate15)      { create(:tax_rate, included_in_price: true, calculator: Spree::Calculator::DefaultTax.new, amount: 0.15, zone: zone) }
+    let(:tax_rate20)      { create(:tax_rate, included_in_price: true, calculator: Spree::Calculator::DefaultTax.new, amount: 0.2, zone: zone) }
+    let(:tax_category10)  { create(:tax_category, tax_rates: [tax_rate10]) }
+    let(:tax_category15)  { create(:tax_category, tax_rates: [tax_rate15]) }
+    let(:tax_category20)  { create(:tax_category, tax_rates: [tax_rate20]) }
+
+    let(:variant)         { create(:variant, product: create(:product, tax_category: tax_category10)) }
+    let(:shipping_method) { create(:shipping_method, calculator: Spree::Calculator::FlatRate.new(preferred_amount: 46.0)) }
+    let(:enterprise_fee)  { create(:enterprise_fee, enterprise: coordinator, tax_category: tax_category20, calculator: Spree::Calculator::FlatRate.new(preferred_amount: 48.0)) }
+
+    let(:order_cycle)     { create(:simple_order_cycle, coordinator: coordinator, coordinator_fees: [enterprise_fee], distributors: [coordinator], variants: [variant]) }
+    let!(:order)          { create(:order, shipping_method: shipping_method, bill_address: create(:address), order_cycle: order_cycle, distributor: coordinator) }
+    let!(:line_item)      { create(:line_item, order: order, variant: variant, price: 44.0) }
+
+    before do
+      Spree::Config.shipment_inc_vat = true
+      Spree::Config.shipping_tax_rate = tax_rate15.amount
+      order.create_shipment!
+      Spree::TaxRate.adjust(order)
+      order.reload.update_distribution_charge!
+    end
+
+    it "returns a hash with all 3 taxes" do
+      order.tax_adjustment_totals.size.should == 3
+    end
+
+    it "contains tax on line_item" do
+      order.tax_adjustment_totals[tax_rate10.amount].should == 4.0
+    end
+
+    it "contains tax on shipping_fee" do
+      order.tax_adjustment_totals[tax_rate15.amount].should == 6.0
+    end
+
+    it "contains tax on enterprise_fee" do
+      order.tax_adjustment_totals[tax_rate20.amount].should == 8.0
+    end
+  end
+
   describe "setting the distributor" do
     it "sets the distributor when no order cycle is set" do
       d = create(:distributor_enterprise)
@@ -603,6 +647,99 @@ describe Spree::Order do
           expect(order.customer.bill_address.same_as?(order.bill_address)).to be true
           expect(order.customer.ship_address.same_as?(order.ship_address)).to be true
         end
+      end
+    end
+  end
+
+  describe "a completed order with shipping and transaction fees" do
+    let(:distributor) { create(:distributor_enterprise, charges_sales_tax: true, allow_order_changes: true) }
+    let(:order) { create(:completed_order_with_fees, distributor: distributor, shipping_fee: shipping_fee, payment_fee: payment_fee) }
+    let(:shipping_fee) { 3 }
+    let(:payment_fee) { 5 }
+    let(:item_num) { order.line_items.length }
+    let(:expected_fees) { item_num * (shipping_fee + payment_fee) }
+
+    before do
+      Spree::Config.shipment_inc_vat = true
+      Spree::Config.shipping_tax_rate = 0.25
+
+      # Sanity check the fees
+      expect(order.adjustments.length).to eq 2
+      expect(item_num).to eq 2
+      expect(order.adjustment_total).to eq expected_fees
+      expect(order.shipment.adjustment.included_tax).to eq 1.2
+    end
+
+    context "removing line_items" do
+      it "updates shipping and transaction fees" do
+        # Setting quantity of an item to zero
+        order.update_attributes(line_items_attributes: [{id: order.line_items.first.id, quantity: 0}])
+
+        # Check if fees got updated
+        order.reload
+        expect(order.adjustment_total).to eq expected_fees - shipping_fee - payment_fee
+        expect(order.shipment.adjustment.included_tax).to eq 0.6
+      end
+    end
+
+    context "changing the shipping method to one without fees" do
+      let(:shipping_method) { create(:shipping_method, calculator: Spree::Calculator::FlatRate.new(preferred_amount: 0)) }
+
+      it "updates shipping fees" do
+        # Change the shipping method
+        order.shipment.update_attributes(shipping_method_id: shipping_method.id)
+        order.save
+
+        # Check if fees got updated
+        order.reload
+        expect(order.adjustment_total).to eq expected_fees - (item_num * shipping_fee)
+        expect(order.shipment.adjustment.included_tax).to eq 0
+      end
+    end
+
+    context "changing the payment method to one without fees" do
+      let(:payment_method) { create(:payment_method, calculator: Spree::Calculator::FlatRate.new(preferred_amount: 0)) }
+
+      it "removes transaction fees" do
+        # Change the payment method
+        order.payment.update_attributes(payment_method_id: payment_method.id)
+        order.save
+
+        # Check if fees got updated
+        order.reload
+        expect(order.adjustment_total).to eq expected_fees - (item_num * payment_fee)
+      end
+    end
+  end
+
+  describe "retrieving previously ordered items" do
+    let(:distributor) { create(:distributor_enterprise) }
+    let(:order_cycle) { create(:simple_order_cycle) }
+    let!(:order) { create(:order, distributor: distributor, order_cycle: order_cycle) }
+
+    it "returns no items if nothing has been ordered" do
+      expect(order.finalised_line_items).to eq []
+    end
+
+    context "when no order has been finalised in this order cycle" do
+      let(:product) { create(:product) }
+
+      it "returns no items even though the cart contains items" do
+        order.add_variant(product.master, 1, 3)
+        expect(order.finalised_line_items).to eq []
+      end
+    end
+
+    context "when an order has been finalised in this order cycle" do
+      let!(:prev_order) { create(:completed_order_with_totals, distributor: distributor, order_cycle: order_cycle, user: order.user) }
+      let!(:prev_order2) { create(:completed_order_with_totals, distributor: distributor, order_cycle: order_cycle, user: order.user) }
+      let(:product) { create(:product) }
+
+      it "returns previous items" do
+        prev_order.add_variant(product.master, 1, 3)
+        prev_order2.reload # to get the right response from line_items
+        expect(order.finalised_line_items.length).to eq 3
+        expect(order.finalised_line_items).to match_array(prev_order.line_items + prev_order2.line_items)
       end
     end
   end
