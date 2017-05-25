@@ -120,7 +120,7 @@ describe LineItemsController do
         order.shipment.reload
         expect(order.adjustment_total).to eq initial_fees - shipping_fee - payment_fee
         expect(order.shipment.adjustment.amount).to eq shipping_fee
-        expect(order.payment.adjustment.amount).to eq payment_fee
+        expect(order.payments.first.adjustment.amount).to eq payment_fee
         expect(order.shipment.adjustment.included_tax).to eq 0.6
       end
     end
