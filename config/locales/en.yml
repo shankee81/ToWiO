@@ -140,6 +140,7 @@ en:
   current: Current
   available: Available
   dashboard: Dashboard
+  powered_by: Powered by
 
   admin:
     # Common properties / models
@@ -206,9 +207,9 @@ en:
         update_user_invoices: "Update User Invoices"
 
     shopfront_settings:
-      embedded_shopfront_settings: Embedded Shopfront Settings
-      enable_embedded_shopfronts: Enable Embedded Shopfronts
-      embedded_shopfronts_whitelist: External Domains Whitelist
+      embedded_shopfront_settings: "Embedded Shopfront Settings"
+      enable_embedded_shopfronts: "Enable Embedded Shopfronts"
+      embedded_shopfronts_whitelist: "External Domains Whitelist"
 
     business_model_configuration:
       edit:
