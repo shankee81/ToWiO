@@ -141,6 +141,8 @@ en:
   available: Available
   dashboard: Dashboard
   powered_by: Powered by
+  blocked_cookies_alert: "Your browser may be blocking cookies needed to use this shopfront. Click below to allow cookies and reload the page."
+  allow_cookies: "Allow Cookies"
 
   admin:
     # Common properties / models
