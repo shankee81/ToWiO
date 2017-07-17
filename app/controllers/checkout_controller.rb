@@ -88,7 +88,7 @@ class CheckoutController < Spree::CheckoutController
 
   def check_order_for_phantom_fees
     phantom_fees = @order.adjustments.joins('LEFT OUTER JOIN spree_line_items ON spree_line_items.id = spree_adjustments.source_id').
-    where("originator_type = 'EnterpriseFee' AND source_type = 'Spree::LineItem' AND spree_line_items.id IS NULL")
+      where("originator_type = 'EnterpriseFee' AND source_type = 'Spree::LineItem' AND spree_line_items.id IS NULL")
 
     if phantom_fees.any?
       Bugsnag.notify(RuntimeError.new("Phantom Fees"), {
@@ -122,7 +122,6 @@ class CheckoutController < Spree::CheckoutController
     retry unless (tries -= 1).zero?
     false
   end
-
 
   def update_failed
     clear_ship_address
@@ -168,8 +167,8 @@ class CheckoutController < Spree::CheckoutController
 
     customer_preferred_bill_address, customer_preferred_ship_address = @order.customer.bill_address, @order.customer.ship_address if @order.customer
 
-    @order.bill_address ||= customer_preferred_bill_address ||= preferred_bill_address || last_used_bill_address || Spree::Address.default
-    @order.ship_address ||= customer_preferred_ship_address ||= preferred_ship_address || last_used_ship_address || Spree::Address.default
+    @order.bill_address ||= customer_preferred_bill_address || preferred_bill_address || last_used_bill_address || Spree::Address.default
+    @order.ship_address ||= customer_preferred_ship_address || preferred_ship_address || last_used_ship_address || Spree::Address.default
   end
 
   def after_payment

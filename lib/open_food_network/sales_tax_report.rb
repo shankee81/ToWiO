@@ -93,11 +93,11 @@ module OpenFoodNetwork
 
     def shipping_cost_for(order)
       shipping_cost = order.adjustments.find_by_label("Shipping").andand.amount
-      shipping_cost = shipping_cost.nil? ? 0.0 : shipping_cost
+      shipping_cost.nil? ? 0.0 : shipping_cost
     end
 
     def tax_included_in(line_item)
-      line_item.adjustments.sum &:included_tax
+      line_item.adjustments.sum(&:included_tax)
     end
 
     def shipment_inc_vat

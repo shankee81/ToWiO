@@ -60,6 +60,12 @@ en:
       spree/order:
         payment_state: Payment State
         shipment_state: Shipment State
+    errors:
+      models:
+        spree/user:
+          attributes:
+            email:
+              taken: "There's already an account for this email. Please login or reset your password."
   devise:
     failure:
       invalid: |
@@ -265,7 +271,7 @@ en:
 
     enterprise_fees:
       index:
-        title: Entreprise Fees
+        title: Enterprise Fees
         enterprise: Enterprise
         fee_type: Fee Type
         name: Name

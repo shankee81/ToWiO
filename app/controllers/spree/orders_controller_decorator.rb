@@ -31,7 +31,6 @@ Spree::OrdersController.class_eval do
     end
   end
 
-
   def update
     @insufficient_stock_lines = []
     @order = order_to_update
@@ -71,7 +70,6 @@ Spree::OrdersController.class_eval do
     end
   end
 
-
   def populate
     # Without intervention, the Spree::Adjustment#update_adjustable callback is called many times
     # during cart population, for both taxation and enterprise fees. This operation triggers a
@@ -98,7 +96,6 @@ Spree::OrdersController.class_eval do
       end
     end
   end
-
 
   # Report the stock levels in the order for all variant ids requested
   def stock_levels(order, variant_ids)
@@ -242,7 +239,7 @@ Spree::OrdersController.class_eval do
     return unless order_to_update.andand.complete?
 
     items = params[:order][:line_items_attributes]
-    .andand.select{ |k,attrs| attrs["quantity"].to_i > 0 }
+      .andand.select{ |k,attrs| attrs["quantity"].to_i > 0 }
 
     if items.empty?
       flash[:error] = I18n.t(:orders_cannot_remove_the_final_item)

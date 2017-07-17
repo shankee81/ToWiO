@@ -101,7 +101,6 @@ Spree::Admin::ReportsController.class_eval do
     # -- Build Report with Order Grouper
     @report = OpenFoodNetwork::OrderCycleManagementReport.new spree_current_user, params
     @table = @report.table_items
-    csv_file_name = "#{params[:report_type]}_#{timestamp}.csv"
 
     render_report(@report.header, @table, params[:csv], "order_cycle_management_#{timestamp}.csv")
   end
@@ -126,7 +125,6 @@ Spree::Admin::ReportsController.class_eval do
     @report = OpenFoodNetwork::PackingReport.new spree_current_user, params
     order_grouper = OpenFoodNetwork::OrderGrouper.new @report.rules, @report.columns
     @table = order_grouper.table(@report.table_items)
-    csv_file_name = "#{params[:report_type]}_#{timestamp}.csv"
 
     render_report(@report.header, @table, params[:csv], "packing_#{timestamp}.csv")
   end
@@ -226,7 +224,7 @@ Spree::Admin::ReportsController.class_eval do
     @suppliers = permissions.visible_enterprises_for_order_reports.is_primary_producer
 
     @order_cycles = OrderCycle.active_or_complete.
-    involving_managed_distributors_of(spree_current_user).order('orders_close_at DESC')
+      involving_managed_distributors_of(spree_current_user).order('orders_close_at DESC')
 
     @report_types = REPORT_TYPES[:orders_and_fulfillment]
     @report_type = params[:report_type]
@@ -272,7 +270,6 @@ Spree::Admin::ReportsController.class_eval do
     @report = OpenFoodNetwork::XeroInvoicesReport.new spree_current_user, params
     render_report(@report.header, @report.table, params[:csv], "xero_invoices_#{timestamp}.csv")
   end
-
 
   def render_report(header, table, create_csv, csv_file_name)
     unless create_csv

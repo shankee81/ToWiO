@@ -11,7 +11,7 @@ module OpenFoodNetwork
     def options_text
       values = self.option_values.joins(:option_type).order("#{Spree::OptionType.table_name}.position asc")
 
-      values.map! &:presentation    # This line changed
+      values.map!(&:presentation)    # This line changed
 
       values.to_sentence({ :words_connector => ", ", :two_words_connector => ", " })
     end
@@ -43,7 +43,6 @@ module OpenFoodNetwork
       return options_text if !self.has_attribute?(:display_as) || display_as.blank?
       display_as
     end
-
 
     def update_units
       delete_unit_option_values

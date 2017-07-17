@@ -181,7 +181,7 @@ feature %q{
     scenario "updating an order cycle", js: true do
       # Given an order cycle with all the settings
       oc = create(:order_cycle)
-      initial_variants = oc.variants.sort_by &:id
+      initial_variants = oc.variants.sort_by(&:id)
 
       # And a coordinating, supplying and distributing enterprise with some products with variants
       coordinator = oc.coordinator
@@ -307,7 +307,7 @@ feature %q{
 
       # And it should have some variants selected
       selected_initial_variants = initial_variants.take initial_variants.size - 1
-      OrderCycle.last.variants.map(&:id).should match_array (selected_initial_variants.map(&:id) + [v1.id, v2.id])
+      OrderCycle.last.variants.map(&:id).should match_array(selected_initial_variants.map(&:id) + [v1.id, v2.id])
 
       # And the collection details should have been updated
       OrderCycle.last.exchanges.where(pickup_time: 'New time 0', pickup_instructions: 'New instructions 0').should be_present
