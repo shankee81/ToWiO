@@ -16,7 +16,7 @@ module CheckoutHelper
     enterprise_fee_adjustments = adjustments.select { |a| a.originator_type == 'EnterpriseFee' && a.source_type != 'Spree::LineItem' }
     adjustments.reject! { |a| a.originator_type == 'EnterpriseFee' && a.source_type != 'Spree::LineItem' }
     unless exclude.include? :admin_and_handling
-      adjustments << Spree::Adjustment.new(label: 'Admin & Handling', amount: enterprise_fee_adjustments.sum(&:amount))
+      adjustments << Spree::Adjustment.new(label: I18n.t(:orders_form_admin), amount: enterprise_fee_adjustments.sum(&:amount))
     end
 
     adjustments
@@ -43,6 +43,25 @@ module CheckoutHelper
     Spree::Money.new order.total_tax, currency: order.currency
   end
 
+  def display_checkout_taxes_hash(order)
+    order.tax_adjustment_totals.each_with_object(Hash.new) do |(tax_rate, tax_amount), hash|
+      hash[number_to_percentage(tax_rate * 100, :precision => 1)] = Spree::Money.new tax_amount, currency: order.currency
+    end
+  end
+
+  def display_line_item_tax_rates(line_item)
+    line_item.tax_rates.map { |tr| number_to_percentage(tr.amount * 100, :precision => 1) }.join(", ")
+  end
+
+  def display_adjustment_tax_rates(adjustment)
+    tax_rates = adjustment.tax_rates
+    tax_rates.map { |tr| number_to_percentage(tr.amount * 100, :precision => 1) }.join(", ")
+  end
+
+  def display_adjustment_amount(adjustment)
+    Spree::Money.new(adjustment.amount, { :currency => adjustment.currency })
+  end
+
   def display_checkout_total_less_tax(order)
     Spree::Money.new order.total - order.total_tax, currency: order.currency
   end
@@ -60,7 +79,6 @@ module CheckoutHelper
   def checkout_country_options
     available_countries.map { |c| [c.name, c.id] }
   end
-
 
   def validated_input(name, path, args = {})
     attributes = {

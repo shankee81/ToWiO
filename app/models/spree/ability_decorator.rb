@@ -4,6 +4,7 @@ class AbilityDecorator
   # All abilites are allocated from this initialiser, currently in 5 chunks.
   # Spree also defines other abilities.
   def initialize(user)
+    add_shopping_abilities user
     add_base_abilities user if is_new_user? user
     add_enterprise_management_abilities user if can_manage_enterprises? user
     add_group_management_abilities user if can_manage_groups? user
@@ -48,6 +49,16 @@ class AbilityDecorator
 
   def can_manage_relationships?(user)
     can_manage_enterprises? user
+  end
+
+  def add_shopping_abilities(user)
+    can [:destroy], Spree::LineItem do |item|
+      user == item.order.user &&
+      item.order.changes_allowed?
+    end
+    can [:cancel], Spree::Order do |order|
+      order.user == user
+    end
   end
 
   # New users can create an enterprise, and gain other permissions from doing this.
@@ -155,6 +166,8 @@ class AbilityDecorator
     can [:admin, :index, :read, :search], Spree::Taxon
     can [:admin, :index, :read, :create, :edit], Spree::Classification
 
+    can [:admin, :index, :import, :save], ProductImporter
+
     # Reports page
     can [:admin, :index, :customers, :orders_and_distributors, :group_buys, :bulk_coop, :payments, :orders_and_fulfillment, :products_and_inventory, :order_cycle_management, :packing], :report
   end
@@ -173,7 +186,7 @@ class AbilityDecorator
   def add_order_management_abilities(user)
     # Enterprise User can only access orders that they are a distributor for
     can [:index, :create], Spree::Order
-    can [:read, :update, :fire, :resend, :invoice, :print], Spree::Order do |order|
+    can [:read, :update, :fire, :resend, :invoice, :print, :print_ticket], Spree::Order do |order|
       # We allow editing orders with a nil distributor as this state occurs
       # during the order creation process from the admin backend
       order.distributor.nil? || user.enterprises.include?(order.distributor) || order.order_cycle.andand.coordinated_by?(user)
@@ -182,6 +195,7 @@ class AbilityDecorator
     can [:admin , :for_line_items], Enterprise
     can [:admin, :index, :create], Spree::LineItem
     can [:destroy, :update], Spree::LineItem do |item|
+      order = item.order
       user.admin? || user.enterprises.include?(order.distributor) || order.order_cycle.andand.coordinated_by?(user)
     end
 
@@ -225,7 +239,6 @@ class AbilityDecorator
     can [:create], Customer
     can [:admin, :index, :update, :destroy], Customer, enterprise_id: Enterprise.managed_by(user).pluck(:id)
   end
-
 
   def add_relationship_management_abilities(user)
     can [:admin, :index, :create], EnterpriseRelationship

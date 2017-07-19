@@ -19,34 +19,33 @@ Spree::LineItem.class_eval do
     else
       # Find line items that are from orders distributed by the user or supplied by the user
       joins(:variant => :product).
-      joins(:order).
-      where('spree_orders.distributor_id IN (?) OR spree_products.supplier_id IN (?)', user.enterprises, user.enterprises).
-      select('spree_line_items.*')
+        joins(:order).
+        where('spree_orders.distributor_id IN (?) OR spree_products.supplier_id IN (?)', user.enterprises, user.enterprises).
+        select('spree_line_items.*')
     end
   }
 
   scope :supplied_by, lambda { |enterprise|
     joins(:product).
-    where('spree_products.supplier_id = ?', enterprise)
+      where('spree_products.supplier_id = ?', enterprise)
   }
   scope :supplied_by_any, lambda { |enterprises|
     joins(:product).
-    where('spree_products.supplier_id IN (?)', enterprises)
+      where('spree_products.supplier_id IN (?)', enterprises)
   }
 
   scope :with_tax, joins(:adjustments).
-                   where('spree_adjustments.originator_type = ?', 'Spree::TaxRate').
-                   select('DISTINCT spree_line_items.*')
+    where('spree_adjustments.originator_type = ?', 'Spree::TaxRate').
+    select('DISTINCT spree_line_items.*')
 
   # Line items without a Spree::TaxRate-originated adjustment
   scope :without_tax, joins("LEFT OUTER JOIN spree_adjustments ON (spree_adjustments.adjustable_id=spree_line_items.id AND spree_adjustments.adjustable_type = 'Spree::LineItem' AND spree_adjustments.originator_type='Spree::TaxRate')").
-                      where('spree_adjustments.id IS NULL')
+    where('spree_adjustments.id IS NULL')
 
 
   def cap_quantity_at_stock!
     update_attributes!(quantity: variant.on_hand) if quantity > variant.on_hand
   end
-
 
   def has_tax?
     adjustments.included_tax.any?
@@ -54,6 +53,10 @@ Spree::LineItem.class_eval do
 
   def included_tax
     adjustments.included_tax.sum(&:included_tax)
+  end
+
+  def tax_rates
+    product.tax_category.andand.tax_rates || []
   end
 
   def price_with_adjustments
@@ -90,7 +93,40 @@ Spree::LineItem.class_eval do
     (final_weight_volume || 0) / quantity
   end
 
+  # MONKEYPATCH of Spree method
+  # Enables scoping of variant to hub/shop, stock drawn down from inventory
+  def update_inventory
+    return true unless order.completed?
+
+    scoper.scope(variant) # this line added
+
+    if new_record?
+      Spree::InventoryUnit.increase(order, variant, quantity)
+    elsif old_quantity = self.changed_attributes['quantity']
+      if old_quantity < quantity
+        Spree::InventoryUnit.increase(order, variant, (quantity - old_quantity))
+      elsif old_quantity > quantity
+        Spree::InventoryUnit.decrease(order, variant, (old_quantity - quantity))
+      end
+    end
+  end
+
+  # MONKEYPATCH of Spree method
+  # Enables scoping of variant to hub/shop, stock replaced to inventory
+  def remove_inventory
+    return true unless order.completed?
+
+    scoper.scope(variant) # this line added
+
+    Spree::InventoryUnit.decrease(order, variant, quantity)
+  end
+
   private
+
+  def scoper
+	  return @scoper unless @scoper.nil?
+	  @scoper = OpenFoodNetwork::ScopeVariantToHub.new(order.distributor)
+	end
 
   def calculate_final_weight_volume
     if final_weight_volume.present? && quantity_was > 0

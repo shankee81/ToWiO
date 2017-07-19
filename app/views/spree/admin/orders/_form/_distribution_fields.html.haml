@@ -1,0 +1,35 @@
+%fieldset.no-border-bottom
+  %legend{align: 'center'}= t('.title')
+
+  - if @order.complete?
+    .alpha.six.columns
+      %p
+        %b= "#{t(:distributor)}:"
+        = @order.distributor.andand.name || t(:none)
+        %input{type: "hidden", id: "order_distributor_id", value: @order.distributor.andand.id}
+    .omega.six.columns
+      %p
+        %b= "#{t(:order_cycle)}:"
+        = @order.order_cycle.andand.name || t(:none)
+        %input{type: "hidden", id: "order_order_cycle_id", value: @order.order_cycle.andand.id}
+  - else
+    .alpha.six.columns
+      .field
+        %label{for: "order_distributor_id"}= t(:distributor)
+        %input.ofn-select2.fullwidth{id: "order_distributor_id",
+        type: 'number',
+        name: "order[distributor_id]",
+        "ng-model" => 'distributor_id',
+        data: "shops" }
+
+    .omega.six.columns
+      .field
+        %label{ for: "order_order_cycle_id"}= t(:order_cycle)
+        %input.ofn-select2.fullwidth{id: "order_order_cycle_id",
+        type: 'number',
+        name: "order[order_cycle_id]",
+        "ng-model" => 'order_cycle_id',
+        "ng-disabled" => "!distributor_id",
+        data: "orderCycles",
+        text: "name_and_status",
+        filter: "validOrderCycle" }

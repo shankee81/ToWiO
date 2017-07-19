@@ -26,7 +26,6 @@ module WebHelper
     have_selector selector
   end
 
-
   def current_path_should_be path
     current_path = URI.parse(current_url).path
     expect(page).to have_current_path path
@@ -46,7 +45,6 @@ module WebHelper
     from = options.delete :from
     page.find_by_id(from).find("option[value='#{value}']").select_option
   end
-
 
   def should_have_failed
     page.status_code.should == 200
@@ -168,6 +166,19 @@ module WebHelper
 
   def close_select2(selector)
     page.evaluate_script "jQuery('#{selector}').select2('close');"
+  end
+
+  def perform_and_ensure(action, *args, assertion)
+    # Buttons/Links/Checkboxes can be unresponsive for a while
+    # so keep clicking them until assertion is satified
+    using_wait_time 0.5 do
+      10.times do
+        send(action, *args)
+        return if assertion.call
+      end
+      # Only make it here if we have tried 10 times
+      expect(assertion.call).to be true
+    end
   end
 
   private

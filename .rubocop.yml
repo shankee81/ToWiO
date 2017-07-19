@@ -1,4 +1,9 @@
+inherit_from:
+  - .rubocop_todo.yml
+
 AllCops:
+  TargetRubyVersion: 2.1
+  TargetRailsVersion: 3.2
   Include:
     - '**/Rakefile'
     - '**/config.ru'
@@ -6,24 +11,168 @@ AllCops:
     - 'db/**/*'
     - 'config/**/*'
     - 'script/**/*'
-    - 'spec/**/*'
+    - 'vendor/**/*'
     - !ruby/regexp /old_and_unused\.rb$/
 
-Documentation:
+# OFN SETTINGS
+# Cop settings that have been agreed upon by the OFN community
+
+Rails:
+  Enabled: true
+
+Style/Documentation:
   Enabled: false
 
-Style/EmptyLinesAroundClassBody:
+Style/StringLiterals:
   Enabled: false
 
-Style/BracesAroundHashParameters:
+Layout/MultilineMethodCallIndentation:
+  Enabled: true
+  EnforcedStyle: indented
+
+# TEMPORARY/CONTESTED SETTINGS
+# These are still to be decided upon, but recommended for inclusion by
+# oeoeaio after scrutinising offenses the codebase
+
+# Don't think this is a big issue, mostly picking up RPSEC scope definitions
+# with lamdas and RSpec '.to change{}' blocks
+Lint/AmbiguousBlockAssociation:
   Enabled: false
-  
+
+# Heaps of offences (> 100) in specs, mostly in situations where two or more
+# instances of a model are required, but only one is referenced. Difficult to
+# fix without making the spec look messy or rewriting it.
+# Should definitely fix at some point.
+Lint/UselessAssignment:
+  Exclude:
+  - spec/**/*
+
+# AFAIK, there is no good alternative to dynamic matchers until we upgrade
+# to Rails 4 and can use #find_by. If there is a better approach, let's do it.
+Rails/DynamicFindBy:
+  Enabled: false
+
+# This should be the programmer's discretion, perhaps we should review all of
+# the uses of it an make specific exceptions though.
+Rails/SkipsModelValidations:
+  Enabled: false
+
+# Relaxed.Ruby.Style SETTINGS
+# These styles are a starting point for the conversation around conventions
+# They should be removed or tweaked and moved above as decisions are made
+# NOTE: Cops which did not fail at the time of writing were removed
+
+Layout/DotPosition:
+  Enabled: false
+  StyleGuide: http://relaxed.ruby.style/#styledotposition
+
+Layout/SpaceBeforeBlockBraces:
+  Enabled: false
+  StyleGuide: http://relaxed.ruby.style/#stylespacebeforeblockbraces
+
+Layout/SpaceInsideParens:
+  Enabled: false
+  StyleGuide: http://relaxed.ruby.style/#stylespaceinsideparens
+
+Style/Alias:
+  Enabled: false
+  StyleGuide: http://relaxed.ruby.style/#stylealias
+
+Style/BlockDelimiters:
+  Enabled: false
+  StyleGuide: http://relaxed.ruby.style/#styleblockdelimiters
+
+Style/CommentAnnotation:
+  Enabled: false
+  StyleGuide: http://relaxed.ruby.style/#stylecommentannotation
+
+Style/DoubleNegation:
+  Enabled: false
+  StyleGuide: http://relaxed.ruby.style/#styledoublenegation
+
+Style/FormatString:
+  Enabled: false
+  StyleGuide: http://relaxed.ruby.style/#styleformatstring
+
+Style/IfUnlessModifier:
+  Enabled: false
+  StyleGuide: http://relaxed.ruby.style/#styleifunlessmodifier
+
+Style/Lambda:
+  Enabled: false
+  StyleGuide: http://relaxed.ruby.style/#stylelambda
+
+Style/MultilineBlockChain:
+  Enabled: false
+  StyleGuide: http://relaxed.ruby.style/#stylemultilineblockchain
+
+Style/NegatedIf:
+  Enabled: false
+  StyleGuide: http://relaxed.ruby.style/#stylenegatedif
+
+Style/NegatedWhile:
+  Enabled: false
+  StyleGuide: http://relaxed.ruby.style/#stylenegatedwhile
+
+Style/ParallelAssignment:
+  Enabled: false
+  StyleGuide: http://relaxed.ruby.style/#styleparallelassignment
+
+Style/PercentLiteralDelimiters:
+  Enabled: false
+  StyleGuide: http://relaxed.ruby.style/#stylepercentliteraldelimiters
+
+Style/Semicolon:
+  Enabled: false
+  StyleGuide: http://relaxed.ruby.style/#stylesemicolon
+
+Style/SingleLineMethods:
+  Enabled: false
+  StyleGuide: http://relaxed.ruby.style/#stylesinglelinemethods
+
+Style/TrailingCommaInArguments:
+  Enabled: false
+  StyleGuide: http://relaxed.ruby.style/#styletrailingcommainarguments
+
+Style/TrailingCommaInLiteral:
+  Enabled: false
+  StyleGuide: http://relaxed.ruby.style/#styletrailingcommainliteral
+
+Style/WordArray:
+  Enabled: false
+  StyleGuide: http://relaxed.ruby.style/#stylewordarray
+
+Lint/AmbiguousRegexpLiteral:
+  Enabled: false
+  StyleGuide: http://relaxed.ruby.style/#lintambiguousregexpliteral
+
+Lint/AssignmentInCondition:
+  Enabled: false
+  StyleGuide: http://relaxed.ruby.style/#lintassignmentincondition
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/BlockNesting:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/ModuleLength:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
 Metrics/LineLength:
   Enabled: false
-  Max: 120
 
-MethodLength:
+Metrics/MethodLength:
   Enabled: false
 
-StringLiterals:
+Metrics/ParameterLists:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
   Enabled: false

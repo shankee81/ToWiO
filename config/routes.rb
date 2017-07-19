@@ -28,6 +28,7 @@ Openfoodnetwork::Application.routes.draw do
     get :products
     post :order_cycle
     get :order_cycle
+    get :changeable_orders_alert
   end
 
   resources :producers, only: [:index] do
@@ -40,6 +41,10 @@ Openfoodnetwork::Application.routes.draw do
     collection do
       get :signup
     end
+  end
+
+  resources :line_items, only: [:destroy] do
+    get :bought, on: :collection
   end
 
   resources :groups, only: [:index, :show] do
@@ -114,6 +119,10 @@ Openfoodnetwork::Application.routes.draw do
 
     get '/inventory', to: 'variant_overrides#index'
 
+    get '/product_import', to: 'product_import#index'
+    post '/product_import', to: 'product_import#import'
+    post '/product_import/save', to: 'product_import#save', as: 'product_import_save'
+
     resources :variant_overrides do
       post :bulk_update, on: :collection
       post :bulk_reset, on: :collection
@@ -145,6 +154,8 @@ Openfoodnetwork::Application.routes.draw do
     resources :column_preferences, only: [], format: :json do
       put :bulk_update, on: :collection
     end
+
+    resource :invoice_settings, only: [:edit, :update]
   end
 
   namespace :api do
@@ -235,7 +246,6 @@ Spree::Core::Engine.routes.prepend do
 
   namespace :admin do
     get '/search/known_users' => "search#known_users", :as => :search_known_users
-
     get '/search/customers' => 'search#customers', :as => :search_customers
 
     resources :products do
@@ -247,6 +257,7 @@ Spree::Core::Engine.routes.prepend do
     resources :orders do
       get :invoice, on: :member
       get :print, on: :member
+      get :print_ticket, on: :member
       get :managed, on: :collection
     end
 
@@ -256,6 +267,7 @@ Spree::Core::Engine.routes.prepend do
   resources :orders do
     get :clear, :on => :collection
     get :order_cycle_expired, :on => :collection
+    put :cancel, on: :member
   end
 
 end

@@ -63,6 +63,7 @@ gem 'wkhtmltopdf-binary'
 
 gem 'foreigner'
 gem 'immigrant'
+gem 'roo', '~> 2.7.0'
 
 gem 'whenever', require: false
 
@@ -90,6 +91,7 @@ gem 'jquery-rails'
 gem 'jquery-migrate-rails'
 gem 'css_splitter'
 
+gem 'ofn-qz', github: 'openfoodfoundation/ofn-qz'
 
 group :test, :development do
   # Pretty printed test output
@@ -113,7 +115,6 @@ end
 
 group :test do
   gem 'webmock'
-
   # See spec/spec_helper.rb for instructions
   #gem 'perftools.rb'
 end
@@ -128,4 +129,10 @@ group :development do
   gem 'guard-zeus'
   gem 'guard-rspec'
   gem 'parallel_tests'
+  gem 'rubocop', '>= 0.49.1'
+
+  # 1.0.9 fixed openssl issues on macOS https://github.com/eventmachine/eventmachine/issues/602
+  # While we don't require this gem directly, no dependents forced the upgrade to a version
+  # greater than 1.0.9, so we just required the latest available version here.
+  gem 'eventmachine', '>= 1.2.3'
 end

@@ -4,11 +4,11 @@ module OpenFoodNetwork
       @user = user
 
       @opts = opts.
-              reject { |k, v| v.blank? }.
-              reverse_merge({report_type: 'summary',
-                             invoice_date: Time.zone.today,
-                             due_date: Time.zone.today + 1.month,
-                             account_code: 'food sales'})
+        reject { |k, v| v.blank? }.
+        reverse_merge({report_type: 'summary',
+                       invoice_date: Time.zone.today,
+                       due_date: Time.zone.today + 1.month,
+                       account_code: 'food sales'})
     end
 
     def header
@@ -175,27 +175,27 @@ module OpenFoodNetwork
     end
 
     def total_untaxable_products(order)
-      order.line_items.without_tax.sum &:amount
+      order.line_items.without_tax.sum(&:amount)
     end
 
     def total_taxable_products(order)
-      order.line_items.with_tax.sum &:amount
+      order.line_items.with_tax.sum(&:amount)
     end
 
     def total_untaxable_fees(order)
-      order.adjustments.enterprise_fee.without_tax.sum &:amount
+      order.adjustments.enterprise_fee.without_tax.sum(&:amount)
     end
 
     def total_taxable_fees(order)
-      order.adjustments.enterprise_fee.with_tax.sum &:amount
+      order.adjustments.enterprise_fee.with_tax.sum(&:amount)
     end
 
     def total_shipping(order)
-      order.adjustments.shipping.sum &:amount
+      order.adjustments.shipping.sum(&:amount)
     end
 
     def total_transaction(order)
-      order.adjustments.payment_fee.sum &:amount
+      order.adjustments.payment_fee.sum(&:amount)
     end
 
     def tax_on_shipping_s(order)
@@ -204,11 +204,11 @@ module OpenFoodNetwork
     end
 
     def total_untaxable_admin_adjustments(order)
-      order.adjustments.admin.without_tax.sum &:amount
+      order.adjustments.admin.without_tax.sum(&:amount)
     end
 
     def total_taxable_admin_adjustments(order)
-      order.adjustments.admin.with_tax.sum &:amount
+      order.adjustments.admin.with_tax.sum(&:amount)
     end
 
     def detail?

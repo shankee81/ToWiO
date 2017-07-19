@@ -6,8 +6,8 @@ feature 'Shops', js: true do
 
   let!(:distributor) { create(:distributor_enterprise, with_payment_and_shipping: true) }
   let!(:invisible_distributor) { create(:distributor_enterprise, visible: false) }
-  let(:d1) { create(:distributor_enterprise) }
-  let(:d2) { create(:distributor_enterprise) }
+  let!(:d1) { create(:distributor_enterprise, with_payment_and_shipping: true) }
+  let!(:d2) { create(:distributor_enterprise, with_payment_and_shipping: true) }
   let!(:order_cycle) { create(:simple_order_cycle, distributors: [distributor], coordinator: create(:distributor_enterprise)) }
   let!(:producer) { create(:supplier_enterprise) }
   let!(:er) { create(:enterprise_relationship, parent: distributor, child: producer) }
@@ -47,13 +47,27 @@ feature 'Shops', js: true do
     it "should show closed shops after clicking the button" do
       create(:simple_product, distributors: [d1, d2])
       visit shops_path
-      click_link_and_ensure("Show Closed Shops", -> { page.has_selector? 'hub.inactive' })
+      click_link_and_ensure("Show closed shops", -> { page.has_selector? 'hub.inactive' })
       page.should have_selector 'hub.inactive', text: d2.name
     end
 
     it "should link to the hub page" do
       follow_active_table_node distributor.name
       expect(page).to have_current_path enterprise_shop_path(distributor)
+    end
+  end
+
+  describe "showing available hubs" do
+    let!(:hub) { create(:distributor_enterprise, with_payment_and_shipping: false) }
+    let!(:order_cycle) { create(:simple_order_cycle, distributors: [hub], coordinator: hub) }
+    let!(:producer) { create(:supplier_enterprise) }
+    let!(:er) { create(:enterprise_relationship, parent: hub, child: producer) }
+
+    it "does not show hubs that are not ready for checkout" do
+      visit shops_path
+
+      Enterprise.ready_for_checkout.should_not include hub
+      page.should_not have_content hub.name
     end
   end
 
@@ -92,7 +106,7 @@ feature 'Shops', js: true do
   describe "taxon badges" do
     let!(:closed_oc) { create(:closed_order_cycle, distributors: [shop], variants: [p_closed.variants.first]) }
     let!(:p_closed) { create(:simple_product, taxons: [taxon_closed]) }
-    let(:shop) { create(:distributor_enterprise) }
+    let(:shop) { create(:distributor_enterprise, with_payment_and_shipping: true) }
     let(:taxon_closed) { create(:taxon, name: 'Closed') }
 
     describe "open shops" do
@@ -111,7 +125,7 @@ feature 'Shops', js: true do
     describe "closed shops" do
       it "shows taxons for any order cycle" do
         visit shops_path
-        click_link 'Show Closed Shops'
+        click_link_and_ensure('Show closed shops', -> { page.has_selector? '.active_table_node'})
         expand_active_table_node shop.name
         expect(page).to have_selector '.fat-taxons', text: 'Closed'
       end

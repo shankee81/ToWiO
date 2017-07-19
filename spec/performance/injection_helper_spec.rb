@@ -18,12 +18,13 @@ describe InjectionHelper, type: :helper, performance: true do
     results = []
     4.times do |i|
       ActiveRecord::Base.connection.query_cache.clear
-      Rails.cache.clear
+      Rails.cache.delete_matched('api\/cached_enterprise_serializer\/enterprises')
       result = Benchmark.measure { helper.inject_enterprises }
       results << result.total if i > 0
       puts result
     end
 
-    puts (results.sum / results.count * 1000).round 0
+    avg = (results.sum / results.count * 1000).round(0)
+    puts avg
   end
 end

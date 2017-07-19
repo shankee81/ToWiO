@@ -38,6 +38,10 @@ Spree::Admin::ReportsController.class_eval do
       ["Payment Methods Report", :payment_methods],
       ["Delivery Report", :delivery]
     ],
+    sales_tax: [
+      ["Tax Types", :tax_types],
+      ["Tax Rates", :tax_rates]
+    ],
     packing: [
       ["Pack By Customer", :pack_by_customer],
       ["Pack By Supplier", :pack_by_supplier]
@@ -59,6 +63,8 @@ Spree::Admin::ReportsController.class_eval do
       render_to_string(partial: 'order_cycle_management_description', layout: false, locals: {report_types: REPORT_TYPES[:order_cycle_management]}).html_safe
     @reports[:packing][:description] =
         render_to_string(partial: 'packing_description', layout: false, locals: {report_types: REPORT_TYPES[:packing]}).html_safe
+    @reports[:sales_tax][:description] =
+        render_to_string(partial: 'sales_tax_description', layout: false, locals: {report_types: REPORT_TYPES[:sales_tax]}).html_safe
 } } }
 
 
@@ -95,7 +101,6 @@ Spree::Admin::ReportsController.class_eval do
     # -- Build Report with Order Grouper
     @report = OpenFoodNetwork::OrderCycleManagementReport.new spree_current_user, params
     @table = @report.table_items
-    csv_file_name = "#{params[:report_type]}_#{timestamp}.csv"
 
     render_report(@report.header, @table, params[:csv], "order_cycle_management_#{timestamp}.csv")
   end
@@ -120,7 +125,6 @@ Spree::Admin::ReportsController.class_eval do
     @report = OpenFoodNetwork::PackingReport.new spree_current_user, params
     order_grouper = OpenFoodNetwork::OrderGrouper.new @report.rules, @report.columns
     @table = order_grouper.table(@report.table_items)
-    csv_file_name = "#{params[:report_type]}_#{timestamp}.csv"
 
     render_report(@report.header, @table, params[:csv], "packing_#{timestamp}.csv")
   end
@@ -159,6 +163,7 @@ Spree::Admin::ReportsController.class_eval do
   def sales_tax
     prepare_date_params params
     @distributors = Enterprise.is_distributor.managed_by(spree_current_user)
+    @report_type = params[:report_type]
 
     @report = OpenFoodNetwork::SalesTaxReport.new spree_current_user, params
 
@@ -219,12 +224,12 @@ Spree::Admin::ReportsController.class_eval do
     @suppliers = permissions.visible_enterprises_for_order_reports.is_primary_producer
 
     @order_cycles = OrderCycle.active_or_complete.
-    involving_managed_distributors_of(spree_current_user).order('orders_close_at DESC')
+      involving_managed_distributors_of(spree_current_user).order('orders_close_at DESC')
 
     @report_types = REPORT_TYPES[:orders_and_fulfillment]
     @report_type = params[:report_type]
 
-    @include_blank = 'All'
+    @include_blank = I18n.t(:all)
 
     # -- Build Report with Order Grouper
     @report = OpenFoodNetwork::OrdersAndFulfillmentsReport.new spree_current_user, params
@@ -265,7 +270,6 @@ Spree::Admin::ReportsController.class_eval do
     @report = OpenFoodNetwork::XeroInvoicesReport.new spree_current_user, params
     render_report(@report.header, @report.table, params[:csv], "xero_invoices_#{timestamp}.csv")
   end
-
 
   def render_report(header, table, create_csv, csv_file_name)
     unless create_csv
@@ -320,8 +324,7 @@ Spree::Admin::ReportsController.class_eval do
       :order_cycle_management => {:name => "Order Cycle Management", :description => ''},
       :sales_tax => { :name => "Sales Tax", :description => "Sales Tax For Orders" },
       :xero_invoices => { :name => "Xero Invoices", :description => 'Invoices for import into Xero' },
-      :packing => { :name => "Packing Reports", :description => '' },
-      :sales_tax => { :name => "Sales Tax", :description => "Sales Tax For Orders" }
+      :packing => { :name => "Packing Reports", :description => '' }
     }
     # Return only reports the user is authorized to view.
     reports.select { |action| can? action, :report }
